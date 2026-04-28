@@ -234,12 +234,12 @@ function initializeTree(queryExectionTree: QueryExecutionNode) {
     .selectAll<SVGTextElement, d3.HierarchyNode<QueryExecutionTree>>('text.title')
     .data((d) => [d])
     .join('text')
-    .attr('class', 'title fill-neutral-500 dark:fill-neutral-300 font-bold text-xs')
+    .attr('class', 'title fill-neutral-500 dark:fill-neutral-300 font-bold')
     .attr('x', -boxWidth / 2 + 10)
     .attr('y', -boxHeight / 2 + boxPadding)
     .attr('text-anchor', 'left')
     .attr('dominant-baseline', 'middle')
-    .text((d) => truncateText(replaceIRIs(d.data.description), 40));
+    .text((d) => truncateText(replaceIRIs(d.data.description), 34));
 
   // NOTE:Columns
   node_selection
