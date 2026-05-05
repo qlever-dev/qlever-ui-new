@@ -41,7 +41,8 @@ export function setupQueryExecutionTree(editor: Editor) {
     }
   });
 
-  queryTreeModal.addEventListener('pointerdown', () => {
+  queryTreeModal.addEventListener('pointerdown', (e) => {
+    if (e.target instanceof SVGTextElement) return;
     queryTreeModal.classList.remove('cursor-grab');
     queryTreeModal.classList.add('cursor-grabbing');
   });
@@ -69,6 +70,11 @@ export function setupQueryExecutionTree(editor: Editor) {
   const zoom = d3
     .zoom()
     .scaleExtent([0.5, 5])
+    .filter((event) => {
+      if (event.type === 'wheel') return true;
+      if (event.target instanceof SVGTextElement) return false;
+      return !event.ctrlKey && !event.button;
+    })
     .on('zoom', (event) => {
       if (event.sourceEvent != null) {
         window.dispatchEvent(new Event('zoom'));
