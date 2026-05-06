@@ -212,6 +212,7 @@ export function setupQueryExecutionTree(editor: Editor) {
 
     window.addEventListener('execute-ended', () => {
       queryRunning = false;
+
     });
   });
 }
