@@ -126,23 +126,10 @@ function updateTree(
   let statusTexts = updateNodeSelection.selectAll('text.status').data((d) => [d]);
   statusTexts.text(formatStatus);
 
-  const highlightNodeSelection = container
-    .selectAll<SVGGElement, d3.HierarchyNode<QueryExecutionTree>>('.node')
-    .data(activeNodes, (d) => d.data.id!);
-  highlightNodeSelection
-    .selectAll('rect.body')
-    .data((d) => [d])
-    .attr('class', 'body stroke')
-    .attr('stroke', 'url(#glowGradientRect)')
-    .attr('filter', 'url(#glow)');
-
-  highlightNodeSelection
-    .exit()
-    .selectAll('rect.body')
-    .data((d) => [d])
-    .attr('class', 'body stroke-black dark:stroke-white stroke')
-    .attr('stroke', '')
-    .attr('filter', '');
+  const activeIds = new Set(activeNodes.map((n) => n.data.id));
+  container
+    .selectAll<SVGRectElement, d3.HierarchyNode<QueryExecutionNode>>('rect.glow-overlay')
+    .attr('opacity', (d) => (activeIds.has(d.data.id) ? 1 : 0));
 
   // NOTE: link glow
   container
@@ -234,6 +221,22 @@ function initializeTree(queryExectionTree: QueryExecutionNode) {
     .attr('fill', (d) =>
       darkMode ? colorScaleDark(d.data.operation_time) : colorScaleLight(d.data.operation_time)
     );
+
+  // NOTE: animated gradient overlay drawn on top of the body border for active nodes
+  node_selection
+    .selectAll<SVGRectElement, unknown>('rect.glow-overlay')
+    .data((d) => [d])
+    .join('rect')
+    .attr('class', 'glow-overlay fill-none stroke pointer-events-none')
+    .attr('x', -boxWidth / 2)
+    .attr('y', -boxHeight / 2)
+    .attr('rx', 3)
+    .attr('ry', 3)
+    .attr('width', boxWidth)
+    .attr('height', boxHeight)
+    .attr('stroke', 'url(#glowGradientRect)')
+    .attr('filter', 'url(#glow)')
+    .attr('opacity', 0);
 
   // NOTE: selection outline (hidden until node is clicked)
   node_selection
