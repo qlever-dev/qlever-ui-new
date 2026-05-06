@@ -10,7 +10,13 @@ import { setupWebSocket } from './utils';
 import type { ExecuteQueryEventDetails } from '../results/init';
 import { SparqlEngine } from '../types/lsp_messages';
 import { animateGradients } from './gradients';
-import { clearQueryExecutionTree, renderQueryExecutionTree, setupAutozoom } from './tree';
+import {
+  clearQueryExecutionTree,
+  deselectNode,
+  renderQueryExecutionTree,
+  setupAutozoom,
+} from './tree';
+import { isDetailsVisible, setupNodeDetailsPanel } from './details';
 import { clearCache } from '../buttons/clear_cache';
 import type { Editor } from '../editor/init';
 import type { QlueLsServiceConfig } from '../types/backend';
@@ -34,14 +40,20 @@ export function setupQueryExecutionTree(editor: Editor) {
   const rerunButton = document.getElementById('rerunQueryButton')!;
 
   setupAutozoom();
+  setupNodeDetailsPanel(() => deselectNode());
 
   window.addEventListener('keydown', (e) => {
     if (visible && e.key === 'Escape') {
-      closeModal();
+      if (isDetailsVisible()) {
+        deselectNode();
+      } else {
+        closeModal();
+      }
     }
   });
 
-  queryTreeModal.addEventListener('pointerdown', () => {
+  queryTreeModal.addEventListener('pointerdown', (e) => {
+    if (e.target instanceof SVGTextElement) return;
     queryTreeModal.classList.remove('cursor-grab');
     queryTreeModal.classList.add('cursor-grabbing');
   });
@@ -69,6 +81,11 @@ export function setupQueryExecutionTree(editor: Editor) {
   const zoom = d3
     .zoom()
     .scaleExtent([0.5, 5])
+    .filter((event) => {
+      if (event.type === 'wheel') return true;
+      if (event.target instanceof SVGTextElement) return false;
+      return !event.ctrlKey && !event.button;
+    })
     .on('zoom', (event) => {
       if (event.sourceEvent != null) {
         window.dispatchEvent(new Event('zoom'));
@@ -128,9 +145,6 @@ export function setupQueryExecutionTree(editor: Editor) {
   closeButton.addEventListener('click', () => {
     closeModal();
   });
-
-  // simulateMessages(zoom_to);
-
 
   window.addEventListener('execute-query', async (event) => {
     queryRunning = true;
@@ -207,6 +221,7 @@ function closeModal() {
   const queryTreeModal = document.getElementById('queryExecutionTreeModal')!;
   queryTreeModal.classList.add('hidden');
   visible = false;
+  deselectNode();
   document.body.classList.remove('overflow-y-hidden');
 }
 
