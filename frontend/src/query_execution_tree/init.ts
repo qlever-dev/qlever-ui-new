@@ -6,7 +6,7 @@
 
 import type { QueryExecutionTree } from '../types/query_execution_tree';
 import * as d3 from 'd3';
-import { setupWebSocket, simulateMessages } from './utils';
+import { setupWebSocket } from './utils';
 import type { ExecuteQueryEventDetails } from '../results/init';
 import { SparqlEngine } from '../types/lsp_messages';
 import { animateGradients } from './gradients';
@@ -145,8 +145,6 @@ export function setupQueryExecutionTree(editor: Editor) {
   closeButton.addEventListener('click', () => {
     closeModal();
   });
-
-  simulateMessages(zoom_to);
 
   window.addEventListener('execute-query', async (event) => {
     queryRunning = true;
