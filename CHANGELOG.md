@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+
+- Click a node in the Query-execution-tree to open a details panel showing all of its data
+
 ### Changed
 
 - Cosmetic changes to the Query-execution-tree

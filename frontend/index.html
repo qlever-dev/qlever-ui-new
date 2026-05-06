@@ -1139,6 +1139,35 @@
         </div>
       </div>
       <svg id="queryExecutionTreeSvg" class="w-full h-full"></svg>
+      <aside
+        id="queryExecutionTreeDetailsPanel"
+        class="hidden fixed top-20 left-4 bottom-4 w-96 max-w-[90vw] z-30 flex-col bg-white/95 dark:bg-gray-900/95 backdrop-blur-md rounded-lg shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden cursor-default"
+      >
+        <div
+          class="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700"
+        >
+          <h3 class="text-base font-bold text-gray-900 dark:text-neutral-200">Node Details</h3>
+          <div
+            id="queryExecutionTreeDetailsCloseButton"
+            class="text-gray-500 hover:text-red-400 cursor-pointer"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="2"
+              stroke="currentColor"
+              class="size-5"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+            </svg>
+          </div>
+        </div>
+        <div
+          id="queryExecutionTreeDetailsContent"
+          class="p-4 overflow-y-auto flex-1 text-sm text-gray-900 dark:text-neutral-300 select-text"
+        ></div>
+      </aside>
     </div>
     <!-- The Examples Modal -->
     <div

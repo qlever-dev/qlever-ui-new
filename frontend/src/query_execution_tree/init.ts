@@ -10,7 +10,13 @@ import { setupWebSocket, simulateMessages } from './utils';
 import type { ExecuteQueryEventDetails } from '../results/init';
 import { SparqlEngine } from '../types/lsp_messages';
 import { animateGradients } from './gradients';
-import { clearQueryExecutionTree, renderQueryExecutionTree, setupAutozoom } from './tree';
+import {
+  clearQueryExecutionTree,
+  deselectNode,
+  renderQueryExecutionTree,
+  setupAutozoom,
+} from './tree';
+import { isDetailsVisible, setupNodeDetailsPanel } from './details';
 import { clearCache } from '../buttons/clear_cache';
 import type { Editor } from '../editor/init';
 import type { QlueLsServiceConfig } from '../types/backend';
@@ -34,10 +40,15 @@ export function setupQueryExecutionTree(editor: Editor) {
   const rerunButton = document.getElementById('rerunQueryButton')!;
 
   setupAutozoom();
+  setupNodeDetailsPanel(() => deselectNode());
 
   window.addEventListener('keydown', (e) => {
     if (visible && e.key === 'Escape') {
-      closeModal();
+      if (isDetailsVisible()) {
+        deselectNode();
+      } else {
+        closeModal();
+      }
     }
   });
 
@@ -137,7 +148,6 @@ export function setupQueryExecutionTree(editor: Editor) {
 
   simulateMessages(zoom_to);
 
-
   window.addEventListener('execute-query', async (event) => {
     queryRunning = true;
 
@@ -204,7 +214,6 @@ export function setupQueryExecutionTree(editor: Editor) {
 
     window.addEventListener('execute-ended', () => {
       queryRunning = false;
-
     });
   });
 }
@@ -213,6 +222,7 @@ function closeModal() {
   const queryTreeModal = document.getElementById('queryExecutionTreeModal')!;
   queryTreeModal.classList.add('hidden');
   visible = false;
+  deselectNode();
   document.body.classList.remove('overflow-y-hidden');
 }
 
