@@ -1,6 +1,6 @@
 import * as d3 from 'd3';
 import type { QueryExecutionNode, QueryExecutionTree } from '../types/query_execution_tree';
-import { replaceIRIs, truncateText, line, findActiveNode, activeSubTree } from './utils';
+import { replaceIRIs, fitText, line, findActiveNode, activeSubTree } from './utils';
 import { showNodeDetails, hideNodeDetails, getSelectedId, refreshSelectedNode } from './details';
 
 const colorScaleDark = d3
@@ -274,7 +274,9 @@ function initializeTree(queryExectionTree: QueryExecutionNode) {
     .attr('y', -boxHeight / 2 + boxPadding)
     .attr('text-anchor', 'left')
     .attr('dominant-baseline', 'middle')
-    .text((d) => truncateText(replaceIRIs(d.data.description), 34));
+    .each(function (d) {
+      fitText(this, replaceIRIs(d.data.description), boxWidth - 20);
+    });
 
   // NOTE:Columns
   node_selection
@@ -299,7 +301,9 @@ function initializeTree(queryExectionTree: QueryExecutionNode) {
     .attr('y', -boxHeight / 2 + boxPadding + 25)
     .attr('text-anchor', 'start')
     .attr('dominant-baseline', 'middle')
-    .text((d) => truncateText(`${d.data.column_names.join(', ')}`, 40));
+    .each(function (d) {
+      fitText(this, d.data.column_names.join(', '), boxWidth - 55);
+    });
 
   // NOTE: Size
   node_selection

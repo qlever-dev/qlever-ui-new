@@ -23,11 +23,33 @@ function shortenIRI(iri: string): string {
   return `<${segments.length > 0 ? segments[segments.length - 1] : ''}>`;
 }
 
-export function truncateText(text: string, width: number) {
-  if (text.length > width) {
-    return text.substring(0, width) + '…';
+// NOTE: trims `text` with an ellipsis until it fits `maxWidth` pixels using the
+// element's computed font. We measure via an offscreen 2D canvas instead of
+// SVGTextContentElement.getComputedTextLength() because the latter returns 0
+// while the tree's modal ancestor still has `display:none` (no layout).
+const measurementCanvas = document.createElement('canvas');
+const measurementCtx = measurementCanvas.getContext('2d')!;
+
+export function fitText(node: SVGTextElement, text: string, maxWidth: number) {
+  const style = window.getComputedStyle(node);
+  measurementCtx.font = `${style.fontStyle} ${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
+
+  if (measurementCtx.measureText(text).width <= maxWidth) {
+    node.textContent = text;
+    return;
   }
-  return text;
+
+  let lo = 0;
+  let hi = text.length;
+  while (lo < hi) {
+    const mid = Math.ceil((lo + hi) / 2);
+    if (measurementCtx.measureText(text.substring(0, mid) + '…').width <= maxWidth) {
+      lo = mid;
+    } else {
+      hi = mid - 1;
+    }
+  }
+  node.textContent = text.substring(0, lo) + '…';
 }
 
 export const line = d3
