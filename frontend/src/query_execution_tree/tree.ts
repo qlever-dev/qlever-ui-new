@@ -33,8 +33,6 @@ export function setupAutozoom() {
   height = window.innerHeight;
 
   autoZoomButton.addEventListener('click', () => {
-    autoZoomButton.firstElementChild?.classList.toggle('hidden');
-    autoZoomButton.children[1].classList.toggle('hidden');
     autoZoomButton.classList.toggle('ring-2');
     autoZoom = !autoZoom;
 
