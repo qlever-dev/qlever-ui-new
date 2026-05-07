@@ -8,7 +8,7 @@ import type { Editor } from '../editor/init';
 import type { TabState } from './types';
 import { closeTab, createTab, renameTab, switchTab } from './operations';
 import { state, tabBar, tabQueryStatus } from './state';
-import { showTabContextMenu } from './contextMenu';
+import { showTabContextMenu } from './context_menu';
 
 export function renderTabBar(editor: Editor): void {
   tabBar.innerHTML = '';

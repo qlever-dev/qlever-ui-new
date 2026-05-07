@@ -16,41 +16,66 @@ export function showTabContextMenu(editor: Editor, tab: TabState, e: MouseEvent)
   e.preventDefault();
   closeMenu();
 
-  const items: TabMenuItem[] = [
-    {
-      label: 'Duplicate',
-      onSelect: () => douplicateTab(editor, tab),
-    },
-    {
-      label: 'Rename',
-      onSelect: () => requestRename(editor, tab),
-    },
-    {
-      label: 'Close',
-      disabled: state.tabs.length <= 1,
-      onSelect: () => closeTab(editor, tab.id),
-    },
-  ];
+  const itemGroups: TabMenuItem[][] =
+    [
+      [
+        {
+          label: 'Duplicate',
+          onSelect: () => douplicateTab(editor, tab),
+        },
+        {
+          label: 'Rename',
+          onSelect: () => requestRename(editor, tab),
+        },
+      ],
+      [
+        {
+          label: 'Close',
+          disabled: state.tabs.length <= 1,
+          onSelect: () => closeTab(editor, tab.id),
+        },
+        {
+          label: 'Close others',
+          disabled: state.tabs.length <= 1,
+          onSelect: () => closeTab(editor, tab.id),
+        },
+        {
+          label: 'Close tabs after',
+          disabled: state.tabs.length <= 1,
+          onSelect: () => closeTab(editor, tab.id),
+        },
+      ]
+    ];
 
   const menu = document.createElement('div');
   menu.className =
-    'fixed z-50 min-w-[10rem] py-1 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-lg text-sm text-gray-700 dark:text-gray-200';
+    'fixed z-50 min-w-[10rem] py-2 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-lg text-sm text-gray-700 dark:text-gray-200';
   menu.style.left = `${e.clientX}px`;
   menu.style.top = `${e.clientY}px`;
 
-  for (const item of items) {
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.textContent = item.label;
-    btn.disabled = !!item.disabled;
-    btn.className = item.disabled
-      ? 'block w-full text-left px-3 py-1.5 text-gray-400 dark:text-gray-500 cursor-not-allowed'
-      : 'block w-full text-left px-3 py-1.5 hover:bg-gray-100 dark:hover:bg-gray-700';
-    btn.addEventListener('click', () => {
-      closeMenu();
-      item.onSelect();
-    });
-    menu.appendChild(btn);
+  for (const [index, items] of itemGroups.entries()) {
+    const groupContainer = document.createElement('div');
+    groupContainer.className = "px-2";
+    for (const item of items) {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.textContent = item.label;
+      btn.disabled = !!item.disabled;
+      btn.className = item.disabled
+        ? 'block rounded w-full text-left px-3 py-1.5 text-gray-400 dark:text-gray-500 cursor-not-allowed'
+        : 'block rounded w-full text-left px-3 py-1.5 hover:bg-gray-100 dark:hover:bg-gray-700';
+      btn.addEventListener('click', () => {
+        closeMenu();
+        item.onSelect();
+      });
+      groupContainer.appendChild(btn);
+    }
+    menu.appendChild(groupContainer);
+    if (index < itemGroups.length - 1) {
+      const sep = document.createElement('div');
+      sep.className = "my-2 border-b border-gray-300 dark:border-gray-700"
+      menu.appendChild(sep)
+    }
   }
 
   document.body.appendChild(menu);
