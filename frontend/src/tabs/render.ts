@@ -8,6 +8,7 @@ import type { Editor } from '../editor/init';
 import type { TabState } from './types';
 import { closeTab, createTab, renameTab, switchTab } from './operations';
 import { state, tabBar, tabQueryStatus } from './state';
+import { showTabContextMenu } from './context_menu';
 
 export function renderTabBar(editor: Editor): void {
   tabBar.innerHTML = '';
@@ -32,6 +33,7 @@ export function renderTabBar(editor: Editor): void {
     }
 
     el.className = `group relative flex items-center gap-1 px-3 py-1.5 cursor-pointer select-none whitespace-nowrap border-b-2 transition-colors ${statusClasses}`;
+    el.setAttribute("data-tab-name", tab.id);
 
     // Status dot (success / error).
     if (status === 'success' || status === 'error') {
@@ -92,6 +94,9 @@ export function renderTabBar(editor: Editor): void {
       }
     });
 
+    // Right-click for context menu.
+    el.addEventListener('contextmenu', (e) => showTabContextMenu(editor, tab, e));
+
     tabBar.appendChild(el);
   }
 
@@ -105,7 +110,7 @@ export function renderTabBar(editor: Editor): void {
   tabBar.appendChild(addBtn);
 }
 
-function startRename(editor: Editor, tab: TabState, nameSpan: HTMLSpanElement): void {
+export function startRename(editor: Editor, tab: TabState, nameSpan: HTMLSpanElement): void {
   const input = document.createElement('input');
   input.type = 'text';
   input.value = tab.name;
