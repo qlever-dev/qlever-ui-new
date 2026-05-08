@@ -1,6 +1,6 @@
 import type { Editor } from '../editor/init';
 import type { TabState } from './types';
-import { closeTab, createTab } from './operations';
+import { closeTab, createTab, switchTab } from './operations';
 import { state } from './state';
 import { startRename } from './render';
 
@@ -37,12 +37,17 @@ export function showTabContextMenu(editor: Editor, tab: TabState, e: MouseEvent)
         {
           label: 'Close others',
           disabled: state.tabs.length <= 1,
-          onSelect: () => closeTab(editor, tab.id),
+          onSelect: () => closeOthers(editor, tab.id),
+        },
+        {
+          label: 'Close tabs before',
+          disabled: state.tabs[0].id === tab.id,
+          onSelect: () => closeBefore(editor, tab),
         },
         {
           label: 'Close tabs after',
-          disabled: state.tabs.length <= 1,
-          onSelect: () => closeTab(editor, tab.id),
+          disabled: state.tabs[state.tabs.length - 1].id === tab.id,
+          onSelect: () => closeAfter(editor, tab),
         },
       ]
     ];
@@ -115,12 +120,41 @@ function onDocumentKeyDown(e: KeyboardEvent): void {
 
 function requestRename(editor: Editor, tab: TabState): void {
   const nameSpan = document.querySelector<HTMLElement>(`[data-tab-name="${tab.id}"]>span`) as HTMLSpanElement;
-  console.log(nameSpan);
-
   startRename(editor, tab, nameSpan)
 }
 
 function douplicateTab(editor: Editor, tab: TabState) {
-  console.log("duplicate", tab);
   createTab(editor, tab.name, tab.content);
+}
+
+async function closeAfter(editor: Editor, trigger_tab: TabState) {
+  const trigger_tab_idx = state.tabs.findIndex((tab) => tab.id == trigger_tab.id);
+  const active_tab_idx = state.tabs.findIndex((tab) => tab.id == state.activeTabId);
+  if (active_tab_idx > trigger_tab_idx) {
+    await switchTab(editor, trigger_tab.id);
+  }
+  const idsToClose = state.tabs.slice(trigger_tab_idx + 1).map((t) => t.id);
+  for (const id of idsToClose) {
+    await closeTab(editor, id);
+  }
+}
+
+async function closeBefore(editor: Editor, trigger_tab: TabState) {
+  const trigger_tab_idx = state.tabs.findIndex((tab) => tab.id == trigger_tab.id);
+  const active_tab_idx = state.tabs.findIndex((tab) => tab.id == state.activeTabId);
+  if (active_tab_idx < trigger_tab_idx) {
+    await switchTab(editor, trigger_tab.id);
+  }
+  const idsToClose = state.tabs.slice(0, trigger_tab_idx).map((t) => t.id);
+  for (const id of idsToClose) {
+    await closeTab(editor, id);
+  }
+}
+
+async function closeOthers(editor: Editor, id: string) {
+  await switchTab(editor, id);
+  const idsToClose = state.tabs.filter((t) => t.id != id).map((t) => t.id);
+  for (const closeId of idsToClose) {
+    await closeTab(editor, closeId);
+  }
 }
