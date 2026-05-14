@@ -1,4 +1,4 @@
-import type { Binding } from './rdf';
+import type { Binding, SPARQLResults } from './rdf';
 import type { ExecuteUpdateResult } from './update';
 
 export interface Position {
@@ -59,6 +59,7 @@ export type ExecuteOperationResult =
 
 export interface ExecuteQueryResult {
   timeMs: number;
+  result: SPARQLResults
 }
 
 export type PartialResult = { header: Header } | { bindings: Binding[] } | { meta: Meta };
@@ -72,6 +73,6 @@ export interface Head {
 }
 
 export interface Meta {
-  'query-time-ms': number;
+  'query-time-ms'?: number;
   'result-size-total': number;
 }

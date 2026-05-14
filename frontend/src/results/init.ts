@@ -21,6 +21,7 @@ import type { QlueLsServiceConfig } from '../types/backend';
 import type { ExecuteOperationResult, Head, PartialResult } from '../types/lsp_messages';
 import type { QueryExecutionTree } from '../types/query_execution_tree';
 import type { ExecuteUpdateResult } from '../types/update';
+import { setupInfiniteScroll } from './infinite_scroll';
 import { renderTableHeader, renderTableRows } from './table';
 import {
   clearQueryStats,
@@ -33,12 +34,15 @@ import {
   stopQueryTimer,
   showMapViewButton,
   escapeHtml,
-  showFullResultButton,
   hideFullResultButton,
 } from './utils';
 
+const pageSize = 100;
+
 export interface ExecuteQueryEventDetails {
   queryId: string;
+  query: string;
+  pageSize: number;
 }
 
 export interface ExecuteQueryEndEventDetails {
@@ -49,31 +53,26 @@ export interface QueryResultSizeDetails {
   size: number;
 }
 
-export interface CancelOrExecuteDetails {
-  limited: boolean;
-}
-
 let queryStatus: QueryStatus = 'idle';
 
 export async function setupResults(editor: Editor) {
-  window.addEventListener('cancel-or-execute', (event) => {
-    const limited = (event as CustomEvent<CancelOrExecuteDetails>).detail?.limited ?? true;
+  window.addEventListener('cancel-or-execute', () => {
     if (queryStatus == 'running') {
       window.dispatchEvent(new Event('execute-cancle-request'));
     } else if (queryStatus == 'idle') {
-      window.dispatchEvent(new CustomEvent('execute-start-request', { detail: { limited } }));
+      window.dispatchEvent(new CustomEvent('execute-start-request'));
     }
   });
   handleSignals(editor);
+  setupInfiniteScroll(editor);
 }
 
 function handleSignals(editor: Editor) {
-  window.addEventListener('execute-start-request', (event) => {
-    const limited = (event as CustomEvent<{ limited: boolean }>).detail?.limited ?? true;
+  window.addEventListener('execute-start-request', () => {
     if (queryStatus == 'idle') {
       queryStatus = 'running';
       window.dispatchEvent(new CustomEvent('execute-started'));
-      executeQueryAndShowResults(editor, limited);
+      executeQueryAndShowResults(editor);
     } else {
       document.dispatchEvent(
         new CustomEvent('toast', {
@@ -94,10 +93,7 @@ function handleSignals(editor: Editor) {
   });
 }
 
-async function executeQueryAndShowResults(editor: Editor, limited = true) {
-  // TODO: infinite scrolling
-  // document.dispatchEvent(new Event('infinite-reset'));
-
+async function executeQueryAndShowResults(editor: Editor) {
   // NOTE: Check if SPARQL endpoint is configured.
   const backend = (await editor.languageClient.sendRequest('qlueLs/getBackend', {})) as
     | QlueLsServiceConfig
@@ -120,9 +116,7 @@ async function executeQueryAndShowResults(editor: Editor, limited = true) {
   clearQueryStats();
   hideFullResultButton();
   const timer = startQueryTimer();
-  // NOTE: here the limit is increased by one to check if the result is larger then the limit.
-  const limit = limited ? settings.results.limit + 1 : null;
-  executeQuery(editor, limit, 0)
+  executeQuery(editor, pageSize, 0)
     .then((timeMs) => {
       showResults();
       stopQueryTimer(timer);
@@ -134,22 +128,25 @@ async function executeQueryAndShowResults(editor: Editor, limited = true) {
       const result = queryStatus === 'canceling' ? 'canceled' : 'error';
       window.dispatchEvent(new CustomEvent('execute-ended', { detail: { result } }));
     });
-  renderLazyResults(editor, limited);
+  renderLazyResults(editor);
 }
 
 // Executes the query in a layz manner.
 // Returns the time the query took end-to-end.
 async function executeQuery(
   editor: Editor,
-  limit: number | null,
+  pageSize: number,
   offset: number = 0
 ): Promise<number> {
+  const query = editor.getContent();
   const queryId =
     crypto.randomUUID?.() ?? `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
   window.dispatchEvent(
     new CustomEvent('execute-query', {
       detail: {
         queryId,
+        query,
+        pageSize
       },
     })
   );
@@ -176,7 +173,7 @@ async function executeQuery(
       },
       queryId: queryId,
       accessToken: settings.general.accessToken,
-      maxResultSize: limit,
+      maxResultSize: pageSize,
       resultOffset: offset,
       lazy: true,
     })
@@ -258,7 +255,7 @@ function renderUpdateResult(result: ExecuteUpdateResult) {
   );
 }
 
-function renderLazyResults(editor: Editor, limited: boolean) {
+function renderLazyResults(editor: Editor) {
   let head: Head | undefined;
   let first_bindings = true;
   let results_count = 0;
@@ -274,12 +271,10 @@ function renderLazyResults(editor: Editor, limited: boolean) {
     } else {
       renderTableRows(head!, partialResult.bindings, results_count);
       results_count += partialResult.bindings.length;
-      if (limited && results_count > settings.results.limit) {
-        showFullResultButton();
-      }
       if (first_bindings) {
         showMapViewButton(editor, head!, partialResult.bindings);
         scrollToResults();
+        window.dispatchEvent(new CustomEvent('infinite-scroll-start'));
         first_bindings = false;
       }
     }

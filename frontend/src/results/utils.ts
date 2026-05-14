@@ -16,9 +16,21 @@ export function showQueryMetaData(meta: Meta) {
   sizeEl.classList.add('normal-nums');
   sizeEl.classList.remove('tabular-nums');
   sizeEl.innerText = meta['result-size-total'].toLocaleString('en-US');
-  document.getElementById('queryTimeComputeContainer')!.classList.remove('hidden');
-  document.getElementById('queryTimeCompute')!.innerText =
-    meta['query-time-ms'].toLocaleString('en-US') + 'ms';
+
+  if (meta['query-time-ms']) {
+    document.getElementById('queryTimeComputeContainer')!.classList.remove('hidden');
+    document.getElementById('queryTimeCompute')!.innerText = meta['query-time-ms'].toLocaleString('en-US') + 'ms';
+  }
+}
+
+export function hideLoadingAnimation() {
+  const resultReloadingAnimation = document.getElementById('resultReloadingAnimation')!;
+  resultReloadingAnimation.classList.add('hidden');
+}
+
+export function showLoadingAnimation() {
+  const resultReloadingAnimation = document.getElementById('resultReloadingAnimation')!;
+  resultReloadingAnimation.classList.remove('hidden');
 }
 
 export function showLoadingScreen() {
@@ -157,44 +169,3 @@ export function hideFullResultButton() {
 }
 
 export type QueryStatus = 'idle' | 'running' | 'canceling';
-
-// function setupInfiniteScroll(editorAndLanguageClient: EditorAndLanguageClient) {
-//   const window_size = 100;
-//   let offset = window_size;
-//   let mutex = false;
-//   let done = false;
-//   const resultReloadingAnimation = document.getElementById('resultReloadingAnimation')!;
-//
-//   async function onScroll() {
-//     if (mutex || done) return;
-//     const scrollPosition = window.innerHeight + window.scrollY;
-//     const pageHeight = document.body.offsetHeight;
-//     if (scrollPosition >= pageHeight - 1000) {
-//       resultReloadingAnimation.classList.remove('hidden');
-//       mutex = true;
-//       const results = await executeQuery(editorAndLanguageClient, window_size, offset);
-//       const resultsTable = document.getElementById('resultsTable')! as HTMLTableElement;
-//       const rows = renderTableRows(results, offset);
-//       resultsTable.appendChild(rows);
-//       resultReloadingAnimation.classList.add('hidden');
-//       offset += window_size;
-//       mutex = false;
-//     }
-//   }
-//
-//   function stopReload() {
-//     done = true;
-//   }
-//
-//   function reset() {
-//     offset = window_size;
-//     mutex = false;
-//     done = false;
-//   }
-//
-//   document.addEventListener('scroll', onScroll);
-//   document.addEventListener('infinite-reset', () => {
-//     reset();
-//   });
-//   document.addEventListener('infinite-stop', stopReload);
-// }
