@@ -159,7 +159,7 @@ export async function buildWrapperConfig(initial: string) {
       glyphMargin: true,
       contextmenu: false,
       folding: true,
-      foldingImportsByDefault: true,
+      foldingImportsByDefault: false,
       wordBasedSuggestions: 'off',
       snippetSuggestions: 'bottom',
       suggest: {
