@@ -50,7 +50,15 @@ class SparqlEndpointConfiguration(CamelModel):
     @field_validator("prefix_map", mode="before")
     @classmethod
     def _merge_prefix_defaults(cls, v: Any) -> dict[str, Any]:
-        return {**DEFAULT_PREFIX_MAP, **(v or {})}
+        configured = dict(v or {})
+        used_uris = {str(uri) for uri in configured.values()}
+        merged = dict(configured)
+        for prefix, uri in DEFAULT_PREFIX_MAP.items():
+            if prefix in merged or str(uri) in used_uris:
+                continue
+            merged[prefix] = uri
+            used_uris.add(str(uri))
+        return merged
 
 
 class AppConfig(RootModel[dict[str, SparqlEndpointConfiguration]]):
