@@ -24,6 +24,7 @@ import type { QlueLsServiceConfig } from '../types/backend';
 const margin = { top: 20, right: 20, bottom: 20, left: 20 };
 let visible = false;
 let queryRunning = false;
+let activeSocket: WebSocket | null = null;
 
 /**
  * Initializes the query execution tree (QET) analysis modal.
@@ -149,8 +150,11 @@ export function setupQueryExecutionTree(editor: Editor) {
   window.addEventListener('execute-query', async (event) => {
     queryRunning = true;
 
-    // NOTE: cleanup previous runs.
+    // NOTE: cleanup previous runs. Closing the previous query's socket is
+    // essential: otherwise its late runtime messages keep rendering into the
+    // shared tree state and corrupt the new query's tree.
     clearQueryExecutionTree();
+    closeActiveSocket();
 
     const service = (await editor.languageClient.sendRequest(
       'qlueLs/getBackend',
@@ -164,6 +168,7 @@ export function setupQueryExecutionTree(editor: Editor) {
     const { queryId } = (event as CustomEvent<ExecuteQueryEventDetails>).detail;
 
     const socket = setupWebSocket(service.url, queryId);
+    activeSocket = socket;
 
     socket.addEventListener('open', () => {
       socket.send('cancel_on_close');
@@ -176,6 +181,8 @@ export function setupQueryExecutionTree(editor: Editor) {
     let renderedCount = 0;
 
     function processMessage() {
+      // NOTE: a superseded query's socket must not render anymore.
+      if (socket !== activeSocket) return;
       renderedCount = messageCount;
       const queryExecutionTree = JSON.parse(latestMessage!) as QueryExecutionTree;
       renderQueryExecutionTree(queryExecutionTree, zoom_to);
@@ -196,6 +203,8 @@ export function setupQueryExecutionTree(editor: Editor) {
     }
 
     socket.addEventListener('message', (event) => {
+      // NOTE: ignore late messages from a superseded query's socket.
+      if (socket !== activeSocket) return;
       latestMessage = event.data;
       messageCount++;
       if (!running) {
@@ -203,18 +212,26 @@ export function setupQueryExecutionTree(editor: Editor) {
         setTimeout(processMessage, throttleTimeMs);
       }
     });
-
-    window.addEventListener('execute-cancle-request', () => {
-      queryRunning = false;
-      // socket.send('cancel');
-      // socket.close();
-    });
-
-    window.addEventListener('execute-ended', () => {
-      queryRunning = false;
-
-    });
   });
+
+  // NOTE: registered once (not per execute-query) to avoid accumulating
+  // listeners. Canceling closes the socket, which signals QLever to cancel
+  // the query (the socket sent `cancel_on_close` on open).
+  window.addEventListener('execute-cancle-request', () => {
+    queryRunning = false;
+    closeActiveSocket();
+  });
+
+  window.addEventListener('execute-ended', () => {
+    queryRunning = false;
+  });
+}
+
+function closeActiveSocket() {
+  if (activeSocket != null) {
+    activeSocket.close();
+    activeSocket = null;
+  }
 }
 
 function closeModal() {

@@ -74,6 +74,15 @@ function updateTree(
   const oldNodes = root!.descendants();
   const newRoot = d3.hierarchy<QueryExecutionTree>(queryExecutionTree);
   const newNodes = newRoot.descendants();
+  // NOTE: updateTree maps nodes to the previous render by index, which is only
+  // valid when the tree shape is unchanged (same query, updated runtime info).
+  // If the node count differs it is a different tree — rebuild from scratch
+  // instead of indexing past the end of `oldNodes`.
+  if (newNodes.length !== oldNodes.length) {
+    clearQueryExecutionTree();
+    initializeTree(queryExecutionTree);
+    return;
+  }
   d3.zip(newNodes, oldNodes).forEach(([newNode, oldNode]) => {
     newNode.data.id = oldNode.data.id;
     newNode.x = oldNode.x;
