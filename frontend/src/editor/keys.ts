@@ -45,6 +45,18 @@ export function setup_key_bindings(editor: Editor) {
     openSettings();
   });
 
+  // NOTE: rebind the quick fix (action) widget from Ctrl + . to Ctrl + Shift + .
+  //       Firefox 150+ on Linux claims Ctrl + . for the GTK emoji picker.
+  monaco.editor.addKeybindingRule({
+    command: '-editor.action.quickFix',
+    keybinding: monaco.KeyMod.CtrlCmd | monaco.KeyCode.Period,
+  });
+  monaco.editor.addKeybindingRule({
+    command: 'editor.action.quickFix',
+    keybinding: monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.Period,
+    when: 'editorHasCodeActionsProvider && editorTextFocus && !editorReadonly',
+  });
+
   // NOTE: jump forward on TAB and backward on Shift + TAB
   monaco.editor.addKeybindingRule({
     command: 'jumpToNextPosition',
