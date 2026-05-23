@@ -136,7 +136,7 @@ function buildSelector(editor: Editor) {
       btn.textContent = display;
       btn.dataset.templateKey = key;
       btn.className =
-        'px-2 py-0.5 rounded cursor-pointer border border-gray-300 dark:border-gray-500 hover:bg-gray-200 dark:hover:bg-gray-600';
+        'px-2 py-0.5 rounded cursor-pointer border border-button-border hover:bg-button-hover';
       btn.addEventListener('click', () => {
         selectTemplate(key, editor);
       });
@@ -165,7 +165,7 @@ function selectTemplate(key: QueryTemplate, editor: Editor) {
         'px-2 py-0.5 rounded cursor-pointer border border-green-600 bg-green-600 text-white';
     } else {
       btn.className =
-        'px-2 py-0.5 rounded cursor-pointer border border-gray-300 dark:border-gray-500 hover:bg-gray-200 dark:hover:bg-gray-600';
+        'px-2 py-0.5 rounded cursor-pointer border border-button-border hover:bg-button-hover';
     }
   }
 

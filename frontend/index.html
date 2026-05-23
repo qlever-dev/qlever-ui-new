@@ -201,13 +201,13 @@
             <select
               name="backendSelector"
               id="backendSelector"
-              class="appearance-none focus:outline-none ps-5 py-1 cursor-pointer w-full rounded border border-gray-400 dark:border-gray-600 bg-slate-200 dark:bg-slate-700 hover:bg-gray-300 dark:hover:bg-gray-800 px-3"
+              class="appearance-none focus:outline-none ps-5 py-1 cursor-pointer w-full rounded border border-button-border bg-slate-200 dark:bg-slate-700 hover:bg-button-hover px-3"
             ></select>
           </div>
           <div class="flex flex-row h-8">
             <div
               id="datasetInformationButton"
-              class="border border-gray-400 dark:border-gray-600 rounded-l bg-slate-100 dark:bg-slate-700 hover:bg-gray-300 dark:hover:bg-gray-800 flex cursor-pointer justify-center w-fit px-3 py-0.5"
+              class="border border-button-border rounded-l bg-slate-100 dark:bg-slate-700 hover:bg-button-hover flex cursor-pointer justify-center w-fit px-3 py-0.5"
             >
               <span class="inline-flex items-center gap-1">
                 <svg
@@ -229,7 +229,7 @@
             </div>
             <div
               id="helpButton"
-              class="border-gray-400 dark:border-gray-600 border-y bg-slate-100 dark:bg-slate-700 hover:bg-gray-300 flex dark:hover:bg-gray-800 cursor-pointer justify-center w-fit px-3 py-0.5"
+              class="border-button-border border-y bg-slate-100 dark:bg-slate-700 hover:bg-button-hover flex cursor-pointer justify-center w-fit px-3 py-0.5"
             >
               <span class="inline-flex items-center gap-1">
                 <svg
@@ -251,7 +251,7 @@
             </div>
             <div
               id="settingsButton"
-              class="border-gray-400 dark:border-gray-600 border rounded-r bg-slate-100 dark:bg-slate-700 hover:bg-gray-300 dark:hover:bg-gray-800 flex cursor-pointer justify-center w-fit px-3 py-0.5"
+              class="border-button-border border rounded-r bg-slate-100 dark:bg-slate-700 hover:bg-button-hover flex cursor-pointer justify-center w-fit px-3 py-0.5"
             >
               <span class="inline-flex items-center gap-1">
                 <svg
@@ -326,10 +326,10 @@
             <div id="editor" class="h-full flex-1 min-h-0"></div>
             <div
               id="parseTreePanel"
-              class="h-full flex-1 hidden flex-col overflow-hidden rounded border border-gray-400 dark:border-gray-600 bg-white dark:bg-neutral-800"
+              class="h-full flex-1 hidden flex-col overflow-hidden rounded border border-button-border bg-white dark:bg-neutral-800"
             >
               <div
-                class="flex items-center justify-between px-3 py-1.5 border-b border-gray-400 dark:border-gray-600 bg-slate-100 dark:bg-slate-700 text-xs font-semibold"
+                class="flex items-center justify-between px-3 py-1.5 border-b border-button-border bg-slate-100 dark:bg-slate-700 text-xs font-semibold"
               >
                 <span>Parse Tree</span>
                 <div class="flex items-center gap-3">
@@ -365,10 +365,10 @@
             </div>
             <div
               id="templatePanel"
-              class="h-full flex-1 hidden flex-col overflow-hidden rounded border border-gray-400 dark:border-gray-600 bg-white dark:bg-neutral-800"
+              class="h-full flex-1 hidden flex-col overflow-hidden rounded border border-button-border bg-white dark:bg-neutral-800"
             >
               <div
-                class="flex items-center justify-between px-3 py-1.5 border-b border-gray-400 dark:border-gray-600 bg-slate-100 dark:bg-slate-700 text-xs font-semibold"
+                class="flex items-center justify-between px-3 py-1.5 border-b border-button-border bg-slate-100 dark:bg-slate-700 text-xs font-semibold"
               >
                 <span>Completion Templates</span>
                 <div class="flex items-center gap-2">
@@ -394,7 +394,7 @@
           <div class="flex flex-col lg:flex-row gap-2 justify-between">
             <div id="controll">
               <div
-                class="h-8 grid grid-cols-3 lg:grid-cols-[6rem_auto_6rem] border-gray-400 dark:border-gray-600 border rounded overflow-clip"
+                class="h-8 grid grid-cols-3 lg:grid-cols-[6rem_auto_6rem] border-button-border border rounded overflow-clip"
               >
                 <div
                   id="executeButton"
@@ -492,7 +492,7 @@
                 </div>
                 <button
                   id="downloadButton"
-                  class="border-gray-400 dark:border-gray-600 border-x bg-slate-100 dark:bg-slate-700 active:bg-slate-400 dark:active:bg-gray-950 hover:bg-gray-300 dark:hover:bg-gray-800 flex cursor-pointer justify-center px-2 py-1"
+                  class="border-button-border border-x bg-slate-100 dark:bg-slate-700 active:bg-slate-400 dark:active:bg-gray-950 hover:bg-button-hover flex cursor-pointer justify-center px-2 py-1"
                 >
                   <span class="inline-flex items-center gap-1">
                     <svg
@@ -514,7 +514,7 @@
                 </button>
                 <button
                   id="shareButton"
-                  class="bg-slate-100 dark:bg-slate-700 active:bg-slate-400 dark:active:bg-gray-950 hover:bg-gray-300 dark:hover:bg-gray-800 flex justify-center px-2 py-1 cursor-pointer"
+                  class="bg-slate-100 dark:bg-slate-700 active:bg-slate-400 dark:active:bg-gray-950 hover:bg-button-hover flex justify-center px-2 py-1 cursor-pointer"
                 >
                   <span class="inline-flex items-center gap-1">
                     <svg
@@ -538,11 +538,11 @@
             </div>
             <div id="controll">
               <div
-                class="grid grid-cols-[6rem_auto_6rem] sm:grid-cols-4 border-gray-400 dark:border-gray-600 border-separate border rounded overflow-clip h-8"
+                class="grid grid-cols-[6rem_auto_6rem] sm:grid-cols-4 border-button-border border-separate border rounded overflow-clip h-8"
               >
                 <div
                   id="formatButton"
-                  class="border-gray-400 dark:border-gray-600 bg-slate-100 dark:bg-slate-700 active:bg-slate-400 dark:active:bg-gray-950 hover:bg-gray-300 dark:hover:bg-gray-800 flex cursor-pointer justify-center py-1"
+                  class="border-button-border bg-slate-100 dark:bg-slate-700 active:bg-slate-400 dark:active:bg-gray-950 hover:bg-button-hover flex cursor-pointer justify-center py-1"
                 >
                   <span class="inline-flex items-center gap-1">
                     <svg
@@ -564,7 +564,7 @@
                 </div>
                 <div
                   id="clearCacheButton"
-                  class="border-gray-400 dark:border-gray-600 border-x bg-slate-100 dark:bg-slate-700 active:bg-slate-400 dark:active:bg-gray-950 hover:bg-gray-300 dark:hover:bg-gray-800 flex cursor-pointer justify-center py-0.5 px-2"
+                  class="border-button-border border-x bg-slate-100 dark:bg-slate-700 active:bg-slate-400 dark:active:bg-gray-950 hover:bg-button-hover flex cursor-pointer justify-center py-0.5 px-2"
                 >
                   <span class="inline-flex items-center gap-1">
                     <svg
@@ -586,7 +586,7 @@
                 </div>
                 <div
                   id="analysisButton"
-                  class="border-gray-400 dark:border-gray-600 bg-slate-100 dark:bg-slate-700 active:bg-slate-400 dark:active:bg-gray-950 hover:bg-gray-300 dark:hover:bg-gray-800 flex justify-center py-1 cursor-pointer"
+                  class="border-button-border bg-slate-100 dark:bg-slate-700 active:bg-slate-400 dark:active:bg-gray-950 hover:bg-button-hover flex justify-center py-1 cursor-pointer"
                 >
                   <span class="inline-flex items-center gap-1">
                     <svg
@@ -608,7 +608,7 @@
                 </div>
                 <div
                   id="examplesButton"
-                  class="border-gray-400 dark:border-gray-600 border-t sm:border-t-0 sm:border-l bg-slate-100 dark:bg-slate-700 active:bg-slate-400 dark:active:bg-gray-950 hover:bg-gray-300 dark:hover:bg-gray-800 flex justify-center col-span-3 sm:col-span-1 py-1 cursor-pointer"
+                  class="border-button-border border-t sm:border-t-0 sm:border-l bg-slate-100 dark:bg-slate-700 active:bg-slate-400 dark:active:bg-gray-950 hover:bg-button-hover flex justify-center col-span-3 sm:col-span-1 py-1 cursor-pointer"
                 >
                   <span class="inline-flex items-center">
                     <svg
@@ -844,7 +844,7 @@
                 <button
                   id="fullResultButton"
                   type="button"
-                  class="border border-gray-400 dark:border-gray-600 rounded flex items-center gap-1 px-2 cursor-pointer hover bg-slate-100 dark:bg-slate-700 active:bg-slate-400 dark:active:bg-gray-950 hover:bg-gray-300 dark:hover:bg-gray-800 hidden"
+                  class="border border-button-border rounded flex items-center gap-1 px-2 cursor-pointer hover bg-slate-100 dark:bg-slate-700 active:bg-slate-400 dark:active:bg-gray-950 hover:bg-button-hover hidden"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -866,7 +866,7 @@
                   id="mapViewButton"
                   href="#"
                   target="_blank"
-                  class="border border-gray-400 dark:border-gray-600 rounded flex items-center gap-1 px-2 cursor-pointer hover bg-slate-100 dark:bg-slate-700 active:bg-slate-400 dark:active:bg-gray-950 hover:bg-gray-300 dark:hover:bg-gray-800 hidden"
+                  class="border border-button-border rounded flex items-center gap-1 px-2 cursor-pointer hover bg-slate-100 dark:bg-slate-700 active:bg-slate-400 dark:active:bg-gray-950 hover:bg-button-hover hidden"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
