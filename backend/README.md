@@ -15,7 +15,12 @@ FastAPI service that serves SPARQL endpoint configurations and shared queries.
 
 ## Storage
 
-**Endpoint configurations** are loaded from a YAML file (`config.yaml` by default) into memory at startup. Each top-level key is a slug that maps to a `SparqlEndpointConfiguration` (name, URL, engine, prefix map, etc.).
+**Endpoint configurations** are loaded into memory at startup from the path in `CONFIG_PATH` (default: `config.yaml`). The path may be either:
+
+- a **single YAML file** whose top-level keys are slugs mapping to `SparqlEndpointConfiguration` blocks (name, URL, engine, prefix map, etc.), or
+- a **directory** containing one `<slug>.yaml` file per endpoint. The filename stem is the slug; the file content is the endpoint block directly (no top-level slug wrapper). Files whose stem doesn't match the slug pattern are rejected at load.
+
+API writes (`POST` / `PATCH`) persist to the same shape: file mode rewrites the single file, directory mode rewrites only the affected `<slug>.yaml` files.
 
 **Example queries** are read from the filesystem. Each endpoint slug has a directory under `examples/` containing `.rq` files. Files created through the API use OS-safe, enumerated names (`example-001.rq`, `example-002.rq`, …); the human-readable name is stored in a leading frontmatter comment so it can contain characters that are invalid in filenames on non-Linux systems:
 
@@ -33,7 +38,7 @@ The frontmatter is YAML: stripping the `#+ ` prefix from each leading line yield
 
 | Variable | Default | Description |
 |---|---|---|
-| `CONFIG_FILE` | `config.yaml` | Path to the YAML endpoint configuration file |
+| `CONFIG_PATH` | `config.yaml` | Path to the endpoint configuration. Either a single YAML file, or a directory of `<slug>.yaml` files |
 | `EXAMPLES_DIR` | `examples` | Directory containing example query files |
 | `DB_FILE` | `data/data.db` | Path to the SQLite database |
 | `CORS_ORIGINS` | `*` | Comma-separated list of allowed CORS origins |

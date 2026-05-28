@@ -1,14 +1,17 @@
 #!/usr/bin/env python3
-"""Fetch backend configs from API and dump as YAML with block-style multiline strings."""
+"""Fetch backend configs from API and dump as one `<slug>.yaml` per endpoint
+into an output directory (qlue-ui dir-mode layout)."""
 
-import json
+import argparse
 import sys
+from pathlib import Path
 
 import requests
 from ruamel.yaml import YAML
 from ruamel.yaml.scalarstring import LiteralScalarString
 
-BASE_URL = "http://127.0.0.1:8000/api/backends/"
+BASE_URL = "https://qlue-ls.com/api/backends/"
+DEFAULT_OUTPUT_DIR = Path("config.d")
 
 
 def make_block_strings(obj):
@@ -40,17 +43,21 @@ def fetch_backend_detail(api_url):
 
 
 def restructure(data):
-    """Restructure the data as needed. Edit this function to your liking."""
-    # For now: merge summary info with full detail
+    """Restructure the data as needed. Edit this function to your liking.
+
+    Output keys must match qlue-ui's `SparqlEndpointConfiguration` schema —
+    unknown fields are silently dropped at load and the preset's values win.
+    In particular: `default` (not `is_default`), `query_templates` (not
+    `completion_templates`)."""
     result = {
         "name": data["name"],
         "url": data["url"],
-        "is_default": data["is_default"],
+        "default": data["is_default"],
         "sort_key": data["sort_key"],
         "engine": data["engine"],
         "map_view_url": data["map_view_url"],
         "prefix_map": data["prefix_map"],
-        "completion_templates": {
+        "query_templates": {
             "subject_completion": data["subject_completion"],
             "predicate_completion_context_sensitive": data[
                 "predicate_completion_context_sensitive"
@@ -77,24 +84,34 @@ def restructure(data):
 
 
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "output_dir",
+        nargs="?",
+        type=Path,
+        default=DEFAULT_OUTPUT_DIR,
+        help=f"Directory to write <slug>.yaml files into (default: {DEFAULT_OUTPUT_DIR})",
+    )
+    args = parser.parse_args()
+    out_dir: Path = args.output_dir
+    out_dir.mkdir(parents=True, exist_ok=True)
+
     print(f"Fetching backends from {BASE_URL} ...", file=sys.stderr)
     backends = fetch_backends()
     print(f"Found {len(backends)} backends.", file=sys.stderr)
 
-    result = {}
-    for b in backends:
-        print(f"  Fetching detail for {b['slug']} ...", file=sys.stderr)
-        detail = fetch_backend_detail(b["api_url"])
-        restructured = restructure(detail)
-        result[b["slug"]] = restructured
-
-    # Convert multiline strings to block scalar style
-    all_data = make_block_strings(result)
-
-    # Dump as YAML
     yaml = YAML()
     yaml.default_flow_style = False
-    yaml.dump(all_data, sys.stdout)
+
+    for b in backends:
+        slug = b["slug"]
+        print(f"  Fetching detail for {slug} ...", file=sys.stderr)
+        detail = fetch_backend_detail(b["api_url"])
+        block = make_block_strings(restructure(detail))
+        target = out_dir / f"{slug}.yaml"
+        with target.open("w") as f:
+            yaml.dump(block, f)
+        print(f"    wrote {target}", file=sys.stderr)
 
 
 if __name__ == "__main__":

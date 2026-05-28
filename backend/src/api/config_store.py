@@ -2,13 +2,16 @@ import yaml
 import hashlib
 import asyncio
 import logging
+import re
 from pathlib import Path
 from typing import Any, Callable
-from .models import validate_config
+from .models import SLUG_PATTERN, validate_config
 
 logger = logging.getLogger("uvicorn.error")
 
 PRESETS_DIR = Path(__file__).parent / "presets"
+
+_SLUG_RE = re.compile(SLUG_PATTERN)
 
 
 class _Dumper(yaml.Dumper):
@@ -38,6 +41,27 @@ def _deep_merge(base: dict[str, Any], overlay: dict[str, Any]) -> dict[str, Any]
         else:
             out[key] = value
     return out
+
+
+def _load_config_dir(directory: Path) -> dict[str, dict[str, Any]]:
+    """Load one endpoint per `*.yaml` file. Filename stem is the slug."""
+    if not directory.is_dir():
+        return {}
+    raw: dict[str, dict[str, Any]] = {}
+    for path in sorted(directory.glob("*.yaml")):
+        slug = path.stem
+        if not _SLUG_RE.match(slug):
+            raise ValueError(
+                f"Config file {path.name} has invalid slug {slug!r}: "
+                f"must match {SLUG_PATTERN}"
+            )
+        data = yaml.safe_load(path.read_bytes()) or {}
+        if not isinstance(data, dict):
+            raise ValueError(
+                f"Config file {path.name} must be a YAML mapping, got {type(data).__name__}"
+            )
+        raw[slug] = data
+    return raw
 
 
 def _load_presets(presets_dir: Path) -> dict[str, dict[str, Any]]:
@@ -120,6 +144,17 @@ class ConfigStore:
         self._file_path = filepath
         self._presets_dir = presets_dir
 
+    def _is_dir_mode(self) -> bool:
+        """Directory mode if the path is an existing dir, or doesn't exist and
+        lacks a YAML suffix (so an empty deployment with `CONFIG_PATH=/etc/conf.d`
+        still starts in dir mode)."""
+        p = self._file_path
+        if p.is_dir():
+            return True
+        if p.exists():
+            return False
+        return p.suffix.lower() not in (".yaml", ".yml")
+
     async def load(self) -> int:
         async with self._lock:
             self._presets = _load_presets(self._presets_dir)
@@ -127,6 +162,11 @@ class ConfigStore:
                 f"Loaded {len(self._presets)} preset{'s' if len(self._presets) != 1 else ''}: "
                 f"{', '.join(sorted(self._presets)) or '—'}"
             )
+            if self._is_dir_mode():
+                self._raw = _load_config_dir(self._file_path)
+                self._resolved = self._resolve_all(self._raw)
+                self._file_hash = ""
+                return len(self._resolved)
             if self._file_path.exists():
                 raw_bytes = self._file_path.read_bytes()
                 self._file_hash = hashlib.sha256(raw_bytes).hexdigest()
@@ -159,15 +199,17 @@ class ConfigStore:
             minimized = _minimize(config, self._presets)
             new_raw = {**self._raw, slug: minimized}
             new_resolved = self._resolve_all(new_raw)
+            affected: set[str] | None = {slug}
             # NOTE: Make sure only one config is the "default" endpoint.
             if new_resolved[slug].get("default"):
                 for other in new_raw:
                     if other != slug:
                         new_raw[other]["default"] = False
                 new_resolved = self._resolve_all(new_raw)
+                affected = None  # any previously-default sibling may have changed
             self._raw = new_raw
             self._resolved = new_resolved
-            self._persist()
+            self._persist(affected)
 
     async def patch(
         self, slug: str, apply: Callable[[dict[str, Any]], dict[str, Any]]
@@ -188,15 +230,39 @@ class ConfigStore:
                 new_resolved = self._resolve_all(new_raw)
                 self._raw = new_raw
                 self._resolved = new_resolved
-                self._persist()
+                self._persist({slug})
             except Exception:
                 self._raw[slug] = prev_raw
                 self._resolved[slug] = prev_resolved
                 raise
             return self._resolved[slug]
 
-    def _persist(self) -> None:
-        """Atomically write the raw state back to the YAML file."""
+    def _persist(self, affected: set[str] | None = None) -> None:
+        """Atomically write raw state to disk.
+
+        File mode rewrites the whole file (`affected` is ignored). Dir mode
+        rewrites one file per slug in `affected` (or every slug if `None`); a
+        slug present in `affected` but absent from `_raw` is unlinked."""
+        if self._is_dir_mode():
+            self._file_path.mkdir(parents=True, exist_ok=True)
+            slugs = affected if affected is not None else set(self._raw)
+            for slug in slugs:
+                target = self._file_path / f"{slug}.yaml"
+                block = self._raw.get(slug)
+                if block is None:
+                    target.unlink(missing_ok=True)
+                    continue
+                dumped = yaml.dump(
+                    block,
+                    Dumper=_Dumper,
+                    default_flow_style=False,
+                    allow_unicode=True,
+                    sort_keys=False,
+                )
+                tmp = target.with_suffix(".tmp")
+                tmp.write_text(dumped)
+                tmp.replace(target)
+            return
         raw = yaml.dump(
             self._raw,
             Dumper=_Dumper,

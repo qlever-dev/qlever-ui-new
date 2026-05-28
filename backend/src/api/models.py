@@ -25,7 +25,14 @@ class CamelModel(BaseModel):
     )
 
 
-class Query_Templates(CamelModel):
+class StrictCamelModel(CamelModel):
+    """Config-schema variant that rejects unknown fields instead of silently
+    dropping them — catches typos like `is_default` or `completion_templates`."""
+
+    model_config = ConfigDict(extra="forbid")
+
+
+class Query_Templates(StrictCamelModel):
     subject_completion: Optional[str] = None
     predicate_completion_context_sensitive: Optional[str] = None
     predicate_completion_context_insensitive: Optional[str] = None
@@ -36,7 +43,7 @@ class Query_Templates(CamelModel):
     hover: Optional[str] = None
 
 
-class SparqlEndpointConfiguration(CamelModel):
+class SparqlEndpointConfiguration(StrictCamelModel):
     """Fully resolved endpoint configuration as returned by the API. `preset` is
     informational metadata showing which preset names were applied during load."""
 
@@ -64,7 +71,7 @@ def validate_config(data: dict[str, Any]) -> dict[str, Any]:
         raise ValueError(f"Schema validation failed:\n{exc}") from exc
 
 
-class SparqlEndpointPatch(CamelModel):
+class SparqlEndpointPatch(StrictCamelModel):
     preset: Optional[list[str]] = None
     name: Optional[str] = None
     url: Optional[HttpUrl] = None

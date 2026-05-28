@@ -87,13 +87,13 @@ Qlever-UI is now available under <http://localhost:7000>
 ### 2. Configuration
 
 Endpoint configurations are defined in `config.default.yaml` (copied into the container as `config.yaml`).
-To customize, mount your own `config.yaml` into the container.
+To customize, mount your own `config.yaml` into the container — or, to keep per-endpoint files separate, mount a directory of `<slug>.yaml` files and point `CONFIG_PATH` at it.
 
 ### 3. Environment variables
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `CONFIG_FILE` | `config.yaml` | Path to the endpoint configuration file |
+| `CONFIG_PATH` | `config.yaml` | Path to the endpoint configuration. Either a single YAML file, or a directory of `<slug>.yaml` files (one endpoint per file) |
 | `EXAMPLES_DIR` | `examples` | Directory containing example queries |
 | `DB_FILE` | `data.db` | Path to the SQLite database (shared queries) |
 | `API_KEY` | *(unset)* | If set, protects write endpoints (PATCH, PUT, POST, DELETE) |

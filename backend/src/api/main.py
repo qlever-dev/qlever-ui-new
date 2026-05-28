@@ -27,7 +27,7 @@ from .query_store import QueryStore
 
 logger = logging.getLogger("uvicorn.error")
 
-CONFIG_PATH = Path(os.getenv("CONFIG_FILE", "config.yaml")).resolve()
+CONFIG_PATH = Path(os.getenv("CONFIG_PATH", "config.yaml")).resolve()
 EXAMPLES_DIR = Path(os.getenv("EXAMPLES_DIR", "examples")).resolve()
 DB_PATH = Path(os.getenv("DB_FILE", "shared-queries.db")).resolve()
 FRONTEND_DIR = Path(os.getenv("FRONTEND_DIR", "frontend_dist"))
@@ -71,7 +71,7 @@ async def lifespan(_: FastAPI):
         centered = "\n".join(line.center(width) for line in lines)
         print(f"\n\033[36m{centered}\033[0m")
         print(f"\033[33m{tagline.center(width)}\033[0m\n")
-    logger.info("Config file:           %s", CONFIG_PATH)
+    logger.info("Config path:           %s", CONFIG_PATH)
     logger.info("Examples dir:          %s", EXAMPLES_DIR)
     logger.info("Shared Query Database: %s", DB_PATH)
     logger.info("API key:               %s", "set" if API_KEY else "not set")
