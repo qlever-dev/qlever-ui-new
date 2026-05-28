@@ -134,12 +134,19 @@ async def patch_endpoint(slug: Slug, patch: SparqlEndpointPatch):
     """Partially update an endpoint configuration. Only provided top-level fields
     are changed. Nested objects like `queryTemplates` are replaced in full — send
     the complete object, not individual sub-fields."""
-    update_data = patch.model_dump(exclude_unset=True)
+    update_data = patch.model_dump(mode="json", exclude_unset=True)
 
     def apply(current: dict[str, Any]) -> dict[str, Any]:
-        stored = SparqlEndpointConfiguration.model_validate(current)
-        updated = stored.model_copy(update=update_data)
-        return updated.model_dump(mode="json", exclude_none=True)
+        # `current` is the raw on-disk dict (may be partial — preset fills the
+        # rest). Patch applies as a shallow top-level merge; an explicit null
+        # removes the override and falls back to preset-supplied values.
+        new = dict(current)
+        for key, value in update_data.items():
+            if value is None:
+                new.pop(key, None)
+            else:
+                new[key] = value
+        return new
 
     try:
         return await config_store.patch(slug, apply)

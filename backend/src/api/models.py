@@ -12,7 +12,6 @@ from pydantic import (
     field_validator,
 )
 from pydantic.alias_generators import to_camel
-from .defaults import DEFAULT_PREFIX_MAP
 
 
 SLUG_PATTERN = r"^[a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?$"
@@ -38,6 +37,10 @@ class Query_Templates(CamelModel):
 
 
 class SparqlEndpointConfiguration(CamelModel):
+    """Fully resolved endpoint configuration as returned by the API. `preset` is
+    informational metadata showing which preset names were applied during load."""
+
+    preset: list[str] = Field(default_factory=list)
     name: str
     url: HttpUrl
     engine: Optional[str] = None
@@ -46,19 +49,6 @@ class SparqlEndpointConfiguration(CamelModel):
     prefix_map: dict[str, AnyUrl] = Field(default_factory=dict)
     map_view_url: Optional[str] = None
     query_templates: Optional[Query_Templates] = None
-
-    @field_validator("prefix_map", mode="before")
-    @classmethod
-    def _merge_prefix_defaults(cls, v: Any) -> dict[str, Any]:
-        configured = dict(v or {})
-        used_uris = {str(uri) for uri in configured.values()}
-        merged = dict(configured)
-        for prefix, uri in DEFAULT_PREFIX_MAP.items():
-            if prefix in merged or str(uri) in used_uris:
-                continue
-            merged[prefix] = uri
-            used_uris.add(str(uri))
-        return merged
 
 
 class AppConfig(RootModel[dict[str, SparqlEndpointConfiguration]]):
@@ -75,6 +65,7 @@ def validate_config(data: dict[str, Any]) -> dict[str, Any]:
 
 
 class SparqlEndpointPatch(CamelModel):
+    preset: Optional[list[str]] = None
     name: Optional[str] = None
     url: Optional[HttpUrl] = None
     engine: Optional[str] = None

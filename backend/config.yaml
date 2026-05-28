@@ -1,222 +1,58 @@
+eval:
+  preset:
+  - common_prefixes
+  - qlever_default
+  name: evaluationen
+  url: http://localhost:7029
+  default: true
+  sort_key: A1
+  prefix_map:
+    module: https://eva.uni-freiburg.de/module/
+    lecture: https://eva.uni-freiburg.de/lecture/
+    person: https://eva.uni-freiburg.de/person/
+    uni: https://eva.uni-freiburg.de/ns#
+
 wikidata:
+  preset:
+  - common_prefixes
+  - qlever_default
   name: Wikidata
   url: https://qlever.dev/api/wikidata
-  engine: QLever
   default: true
   sort_key: A2
-  prefix_map:
-    cc: http://creativecommons.org/ns#
-    data: https://www.wikidata.org/wiki/Special:EntityData/
-    dct: http://purl.org/dc/terms/
-    geo: http://www.opengis.net/ont/geosparql#
-    geof: http://www.opengis.net/def/function/geosparql/
-    imdb: https://www.imdb.com/
-    math: http://www.w3.org/2005/xpath-functions/math#
-    ontolex: http://www.w3.org/ns/lemon/ontolex#
-    owl: http://www.w3.org/2002/07/owl#
-    p: http://www.wikidata.org/prop/
-    pq: http://www.wikidata.org/prop/qualifier/
-    pqn: http://www.wikidata.org/prop/qualifier/value-normalized/
-    pqv: http://www.wikidata.org/prop/qualifier/value/
-    pr: http://www.wikidata.org/prop/reference/
-    prn: http://www.wikidata.org/prop/reference/value-normalized/
-    prov: http://www.w3.org/ns/prov#
-    prv: http://www.wikidata.org/prop/reference/value/
-    ps: http://www.wikidata.org/prop/statement/
-    psn: http://www.wikidata.org/prop/statement/value-normalized/
-    psv: http://www.wikidata.org/prop/statement/value/
-    qfn: http://qlever.cs.uni-freiburg.de/function#
-    ql: http://qlever.cs.uni-freiburg.de/builtin-functions/
-    qlss: https://qlever.cs.uni-freiburg.de/spatialSearch/
-    rdf: http://www.w3.org/1999/02/22-rdf-syntax-ns#
-    rdfs: http://www.w3.org/2000/01/rdf-schema#
-    ref: http://www.wikidata.org/reference/
-    s: http://www.wikidata.org/entity/statement/
-    schema: http://schema.org/
-    skos: http://www.w3.org/2004/02/skos/core#
-    v: http://www.wikidata.org/value/
-    wd: http://www.wikidata.org/entity/
-    wdno: http://www.wikidata.org/prop/novalue/
-    wdt: http://www.wikidata.org/prop/direct/
-    wdtn: http://www.wikidata.org/prop/direct-normalized/
-    wikibase: http://wikiba.se/ontology#
-    xsd: http://www.w3.org/2001/XMLSchema#
-  map_view_url: https://qlever.dev/petrimaps/
   query_templates:
-    subject_completion: "# subject completion\n{% include \"prefix_declarations\"\
-      \ %}\n{% if search_term %}\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n\
-      PREFIX wikibase: <http://wikiba.se/ontology#>\nPREFIX skos: <http://www.w3.org/2004/02/skos/core#>\n\
-      PREFIX schema: <http://schema.org/>\nSELECT ?qlue_ls_entity (SAMPLE(?name) AS\
-      \ ?qlue_ls_label) (SAMPLE(?alias) AS ?qlue_ls_alias) (SAMPLE(?sitelinks) AS\
-      \ ?qlue_ls_count) WHERE {\n  {\n    SELECT ?qlue_ls_entity ?name ?alias WHERE\
-      \ {\n      ?qlue_ls_entity rdfs:label ?name . FILTER (LANG(?name) = \"en\")\n\
-      \      ?qlue_ls_entity skos:altLabel ?alias . FILTER (LANG(?alias) = \"en\"\
-      )\n      {% if search_term_uncompressed %}\n      FILTER (REGEX(STR(?qlue_ls_entity),\
-      \ \"^{{ search_term_uncompressed }}\"))\n      {% elif search_term %}\n    \
-      \  FILTER (REGEX(STR(?name), \"^{{ search_term }}\") || REGEX(STR(?alias), \"\
-      ^{{ search_term }}\")) \n      {% endif %}\n    }\n  }\n  ?qlue_ls_entity wikibase:sitelinks\
-      \ ?sitelinks\n} GROUP BY ?qlue_ls_entity ORDER BY DESC(?qlue_ls_count)\n{% endif\
-      \ %}\nLIMIT {{ limit }} OFFSET {{ offset }}"
-    predicate_completion_context_sensitive: "# predicate completion sensitive\n{%\
-      \ for prefix in prefixes %}\nPREFIX {{prefix.0}}: <{{prefix.1}}>\n{% endfor\
-      \ %}\n{% if subject is not variable %}\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n\
-      PREFIX skos: <http://www.w3.org/2004/02/skos/core#>\nSELECT ?qlue_ls_entity\
-      \ (SAMPLE(?name) as ?qlue_ls_label) (SAMPLE(?count) as ?qlue_ls_count) WHERE\
-      \ {\n  {\n    SELECT ?qlue_ls_entity (COUNT(?qlue_ls_entity) AS ?count) WHERE\
-      \ {\n      {{ local_context }}\n    }\n    GROUP BY ?qlue_ls_entity \n  }\n\
-      \  {% if not search_term %}\n  ?qui_tmp_1 ?qui_tmp_2 ?qlue_ls_entity .\n  ?qui_tmp_1\
-      \ @en@rdfs:label ?name .\n  BIND (?name AS ?alias)\n  {% elif search_term_uncompressed\
-      \ %}\n  ?qui_tmp_1 ?qui_tmp_2 ?qlue_ls_entity .\n  ?qui_tmp_1 @en@rdfs:label\
-      \ ?name .\n  FILTER REGEX(STR(?qlue_ls_entity), \"{{ search_term_uncompressed\
-      \ }}\", \"i\")\n  {% else %}\n  ?qui_tmp_1 ?qui_tmp_2 ?qlue_ls_entity .\n  ?qui_tmp_1\
-      \ @en@rdfs:label ?name .\n  OPTIONAL { ?qui_tmp_1 @en@skos:altLabel ?alias }\n\
-      \  FILTER (REGEX(STR(?name), \"{{ search_term }}\", \"i\") || REGEX(STR(?alias),\
-      \ \"{{ search_term }}\", \"i\"))\n  {% endif %}\n}\nGROUP BY ?qlue_ls_entity\n\
-      ORDER BY DESC(?qlue_ls_count)\n{% else %}\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n\
-      PREFIX skos: <http://www.w3.org/2004/02/skos/core#>\nSELECT ?qlue_ls_entity\
-      \ (SAMPLE(?name) as ?qlue_ls_label) (SAMPLE(?count) as ?qlue_ls_count) WHERE\
-      \ {\n  {% if not context %}\n  {\n    SELECT ?qlue_ls_entity (COUNT(?qlue_ls_entity)\
-      \ AS ?count) WHERE {\n     {{ local_context }}\n    }\n    GROUP BY ?qlue_ls_entity\n\
-      \  }\n  {% else %}\n  {\n    SELECT ?qlue_ls_entity (COUNT(DISTINCT {{ subject\
-      \ }}) AS ?count) WHERE {\n     {{ context }} {{ local_context }}\n    }\n  \
-      \  GROUP BY ?qlue_ls_entity\n  }\n  {% endif %}\n  {% if not search_term %}\n\
-      \  ?qui_tmp_1 ?qui_tmp_2 ?qlue_ls_entity .\n  ?qui_tmp_1 @en@rdfs:label ?name\
-      \ .\n  BIND (?name AS ?alias)\n  {% elif search_term_uncompressed %}\n  ?qui_tmp_1\
-      \ ?qui_tmp_2 ?qlue_ls_entity .\n  ?qui_tmp_1 @en@rdfs:label ?name .\n  FILTER\
-      \ REGEX(STR(?qlue_ls_entity), \"{{ search_term_uncompressed }}\", \"i\")\n \
-      \ {% else %}\n  ?qui_tmp_1 ?qui_tmp_2 ?qlue_ls_entity .\n  ?qui_tmp_1 @en@rdfs:label\
-      \ ?name .\n  OPTIONAL { ?qui_tmp_1 @en@skos:altLabel ?alias }\n  FILTER (REGEX(STR(?name),\
-      \ \"{{ search_term }}\", \"i\") || REGEX(STR(?alias), \"{{ search_term }}\"\
-      , \"i\"))\n  {% endif %}\n}\nGROUP BY ?qlue_ls_entity\nORDER BY DESC(?qlue_ls_count)\n\
-      {% endif %}\nLIMIT {{ limit }} OFFSET {{ offset }}"
-    predicate_completion_context_insensitive: |-
-      # predicate completion insensitive
-      {% for prefix in prefixes %}
-      PREFIX {{prefix.0}}: <{{prefix.1}}>
-      {% endfor %}
-      PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-      PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-      SELECT ?qlue_ls_entity (SAMPLE(?name) as ?qlue_ls_label) (SAMPLE(?alias) AS ?qlue_ls_alias) (SAMPLE(?count) as ?qlue_ls_count) WHERE {
-        { SELECT ?qlue_ls_entity (COUNT({% if local_context is containing("?qlue_ls_inner") %}DISTINCT ?qlue_ls_inner{%else%}?qlue_ls_entity{% endif %}) as ?count)
-          WHERE {
-            {{local_context}}
-          }
-          GROUP BY ?qlue_ls_entity }
-        {% if not search_term %}
-        ?qui_tmp_1 ?qui_tmp_2 ?qlue_ls_entity .
-        ?qui_tmp_1 @en@rdfs:label ?name .
-        BIND (?name AS ?alias)
-        {% elif search_term_uncompressed %}
-        ?qui_tmp_1 ?qui_tmp_2 ?qlue_ls_entity .
-        ?qui_tmp_1 @en@rdfs:label ?name .
-        FILTER REGEX(STR(?qlue_ls_entity), "{{ search_term_uncompressed }}", "i")
-        {% else %}
-        ?qui_tmp_1 ?qui_tmp_2 ?qlue_ls_entity .
-        ?qui_tmp_1 @en@rdfs:label ?name .
-        ?qui_tmp_1 @en@skos:altLabel ?alias .
-        FILTER (REGEX(STR(?name), "{{ search_term }}", "i") || REGEX(STR(?alias), "{{ search_term }}", "i"))
-        {% endif %}
-      } GROUP BY ?qlue_ls_entity ORDER BY DESC(?qlue_ls_count)
-      LIMIT {{ limit }} OFFSET {{ offset }}
-    object_completion_context_sensitive: |-
-      # object completion sensitive
-      {% for prefix in prefixes -%}
-      PREFIX {{prefix.0}}: <{{prefix.1}}>
-      {% endfor -%}
-      PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-      PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-      SELECT ?qlue_ls_entity (SAMPLE(?name) as ?qlue_ls_label)  (SAMPLE(?alias) AS ?qlue_ls_alias) (SAMPLE(?count) as ?qlue_ls_count) WHERE {
-        {
-          SELECT ?qlue_ls_entity (COUNT(?qlue_ls_entity) AS ?count) WHERE {
-            {{ context }} {{ local_context }}
-        }
-        GROUP BY ?qlue_ls_entity }
-        {% if not search_term %}
-        OPTIONAL { ?qlue_ls_entity @en@rdfs:label ?name }
-        {% elif search_term_uncompressed %}
-        FILTER REGEX(STR(?qlue_ls_entity), "{{ search_term_uncompressed }}", "i")
-        {% else %}
-        OPTIONAL { ?qlue_ls_entity @en@rdfs:label ?name }
-        OPTIONAL { ?qlue_ls_entity @en@skos:altLabel ?optional_alias }
-        BIND (COALESCE(?optional_alias, ?qlue_ls_entity) AS ?alias)
-        FILTER (REGEX(STR(?name), "^{{ search_term }}") || REGEX(STR(?alias), "^{{ search_term }}"))
-        {% endif %}
-      }
-      GROUP BY ?qlue_ls_entity
-      ORDER BY DESC(?qlue_ls_count)
-      LIMIT {{ limit }} OFFSET {{ offset }}
-    object_completion_context_insensitive: |-
-      # object completion insensitive
-      {% for prefix in prefixes -%}
-      PREFIX {{prefix.0}}: <{{prefix.1}}>
-      {% endfor -%}
-      PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-      PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-      SELECT ?qlue_ls_entity (SAMPLE(?name) as ?qlue_ls_label) (SAMPLE(?alias) as ?qlue_ls_alias) (SAMPLE(?count) as ?qlue_ls_count) WHERE {
-        { SELECT ?qlue_ls_entity (COUNT(?qlue_ls_entity) AS ?count) WHERE {
-          {{local_context}}
-        } GROUP BY ?qlue_ls_entity }
-        {% if not search_term %}
-        OPTIONAL { ?qlue_ls_entity @en@rdfs:label ?name }
-        BIND (?qlue_ls_entity AS ?alias)
-        {% elif search_term_uncompressed %}
-        FILTER REGEX(STR(?qlue_ls_entity), "{{ search_term_uncompressed }}", "i")
-        {% else %}
-        OPTIONAL { ?qlue_ls_entity @en@rdfs:label ?name }
-        OPTIONAL { ?qlue_ls_entity @en@skos:altLabel ?optional_alias }
-        BIND (COALESCE(?optional_alias, ?qlue_ls_entity) AS ?alias)
-        FILTER (REGEX(STR(?name), "^{{ search_term }}") || REGEX(STR(?alias), "^{{ search_term }}"))
-        {% endif %}
-      }
-      GROUP BY ?qlue_ls_entity
-      ORDER BY DESC(?qlue_ls_count)
-      LIMIT {{ limit }} OFFSET {{ offset }}
-    values_completion_context_sensitive: |-
-      {%- for prefix in prefixes -%}
-      PREFIX {{prefix.0}}: <{{prefix.1}}>
-      {% endfor -%}
-      PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-      PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-      PREFIX wikibase: <http://wikiba.se/ontology#>
-      SELECT ?qlue_ls_entity ?qlue_ls_label (GROUP_CONCAT(DISTINCT ?alias; SEPARATOR=", ") AS ?qlue_ls_alias) ?qlue_ls_count WHERE {
-        {{ context }} {{ local_context }}
-        ?qlue_ls_entity wikibase:sitelinks ?qlue_ls_count .
-        OPTIONAL { ?qlue_ls_entity rdfs:label ?qlue_ls_label . FILTER(LANG(?qlue_ls_label) = "en") }
-        OPTIONAL { ?qlue_ls_entity skos:altLabel ?alias . FILTER(LANG(?alias) = "en") }
-        {% if search_term %}
-          FILTER (REGEX(STR(?qlue_ls_label), "^{{ search_term }}") || REGEX(STR(?alias), "^{{ search_term }}"))
-        {% endif %}
-      }
-      GROUP BY ?qlue_ls_entity ?qlue_ls_label ?qlue_ls_count
-      ORDER BY DESC(?qlue_ls_count)
-      LIMIT {{ limit }}
-    values_completion_context_insensitive: |-
-      {%- for prefix in prefixes -%}
-      PREFIX {{prefix.0}}: <{{prefix.1}}>
-      {% endfor -%}
-      PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-      PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-      PREFIX wikibase: <http://wikiba.se/ontology#>
-      SELECT ?qlue_ls_entity ?qlue_ls_label (GROUP_CONCAT(DISTINCT ?alias; SEPARATOR=", ") AS ?qlue_ls_alias) ?qlue_ls_count WHERE {
-        {{ local_context }}
-        ?qlue_ls_entity wikibase:sitelinks ?qlue_ls_count .
-        OPTIONAL { ?qlue_ls_entity rdfs:label ?qlue_ls_label . FILTER(LANG(?qlue_ls_label) = "en") }
-        OPTIONAL { ?qlue_ls_entity skos:altLabel ?alias . FILTER(LANG(?alias) = "en") }
-        {% if search_term %}
-          FILTER (REGEX(STR(?qlue_ls_label), "^{{ search_term }}") || REGEX(STR(?alias), "^{{ search_term }}"))
-        {% endif %}
-      }
-      GROUP BY ?qlue_ls_entity ?qlue_ls_label ?qlue_ls_count
-      ORDER BY DESC(?qlue_ls_count)
-      LIMIT {{ limit }}
-    hover: |-
-      # Hover
+    subject_completion: |-
+      # subject completion
       {% include "prefix_declarations" %}
+      {% if search_term %}
+
       PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-      SELECT ?qlue_ls_label WHERE {
-        {{ entity }} rdfs:label ?qlue_ls_label FILTER(LANG(?qlue_ls_label) = "en")
-      }
+      PREFIX wikibase: <http://wikiba.se/ontology#>
+      PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+      PREFIX schema: <http://schema.org/>
+      # chagne abc
+      SELECT ?qlue_ls_entity (SAMPLE(?name) AS ?qlue_ls_label) (SAMPLE(?alias) AS ?qlue_ls_alias) (SAMPLE(?sitelinks) AS ?qlue_ls_count) WHERE {
+        {
+          SELECT ?qlue_ls_entity ?name ?alias WHERE {
+            ?qlue_ls_entity rdfs:label ?name . FILTER (LANG(?name) = "en")
+            ?qlue_ls_entity skos:altLabel ?alias . FILTER (LANG(?alias) = "en")
+
+            {% if search_term_uncompressed %}
+            FILTER (REGEX(STR(?qlue_ls_entity), "^{{ search_term_uncompressed }}"))
+            {% elif search_term %}
+            FILTER (REGEX(STR(?name), "^{{ search_term }}") || REGEX(STR(?alias), "^{{ search_term }}"))
+
+            {% endif %}
+          }
+        }
+        ?qlue_ls_entity wikibase:sitelinks ?sitelinks
+      } GROUP BY ?qlue_ls_entity ORDER BY DESC(?qlue_ls_count)
+      {% endif %}
+      LIMIT {{ limit }} OFFSET {{ offset }}
+
 dblp:
+  preset:
+  - common_prefixes
   name: DBLP
   url: https://qlever.dev/api/dblp
   engine: QLever
@@ -240,6 +76,51 @@ dblp:
     xsd: http://www.w3.org/2001/XMLSchema#
     issn: http://issn.org/resource/ISSN/
     br: https://w3id.org/oc/meta/br/
+    activitystreams: https://www.w3.org/ns/activitystreams#
+    bd: http://www.bigdata.com/rdf#
+    bibo: http://purl.org/ontology/bibo/
+    busco: http://busco.ezlab.org/schema#
+    chebi: http://purl.obolibrary.org/obo/CHEBI_
+    csvw: http://purl.org/csvw/vocab#
+    dc: http://purl.org/dc/elements/1.1/
+    dcat: http://www.w3.org/ns/dcat#
+    dcmit: http://purl.org/dc/dcmitype/
+    ECO: http://purl.obolibrary.org/obo/ECO_
+    ensembl: http://rdf.ebi.ac.uk/resource/ensembl/
+    hydra: http://www.w3.org/ns/hydra/core#
+    faldo: http://biohackathon.org/resource/faldo#
+    foaf: http://xmlns.com/foaf/0.1/
+    genex: http://purl.org/genex#
+    geo: http://www.opengis.net/ont/geosparql#
+    geof: http://www.opengis.net/def/function/geosparql/
+    go: http://purl.obolibrary.org/obo/GO_
+    mondo: http://purl.obolibrary.org/obo/MONDO_
+    np: http://www.nanopub.org/nschema#
+    npx: http://purl.org/nanopub/x/
+    obo: http://purl.obolibrary.org/obo/
+    oboInOwl: http://www.geneontology.org/formats/oboInOwl#
+    osmwiki: 'https://www.openstreetmap.org/wiki/Key:'
+    pav: http://purl.org/pav/
+    prov: http://www.w3.org/ns/prov#
+    pubmed: http://purl.uniprot.org/pubmed/
+    qudt: http://qudt.org/schema/qudt/
+    rh: http://rdf.rhea-db.org/
+    sd: http://www.w3.org/ns/sparql-service-description#
+    sh: http://www.w3.org/ns/shacl#
+    shex: http://www.w3.org/ns/shex#
+    sio: http://semanticscience.org/resource/
+    sioc: http://rdfs.org/sioc/ns#
+    skos: http://www.w3.org/2004/02/skos/core#
+    sp: http://spinrdf.org/sp#
+    stato: http://purl.obolibrary.org/obo/STATO_
+    taxon: http://purl.uniprot.org/taxonomy/
+    time: http://www.w3.org/2006/time#
+    uniparc: http://purl.uniprot.org/uniparc/
+    uniprot: http://purl.uniprot.org/uniprot/
+    up: http://purl.uniprot.org/core/
+    vcard: http://www.w3.org/2006/vcard/ns#
+    voag: http://voag.linkedmodel.org/schema/voag#
+    void: http://rdfs.org/ns/void#
   map_view_url: https://qlever.dev/petrimaps/
   query_templates:
     subject_completion: |-
@@ -338,6 +219,8 @@ dblp:
     values_completion_context_insensitive: ''
     hover: ''
 osm-planet:
+  preset:
+  - common_prefixes
   name: OSM planet
   url: https://qlever.dev/api/osm-planet
   engine: QLever
@@ -365,6 +248,54 @@ osm-planet:
     osm2rdfkey: https://osm2rdf.cs.uni-freiburg.de/rdf/key#
     osm2rdfgeom: https://osm2rdf.cs.uni-freiburg.de/rdf/geom#
     osm2rdfmember: https://osm2rdf.cs.uni-freiburg.de/rdf/member#
+    activitystreams: https://www.w3.org/ns/activitystreams#
+    bd: http://www.bigdata.com/rdf#
+    bibo: http://purl.org/ontology/bibo/
+    busco: http://busco.ezlab.org/schema#
+    chebi: http://purl.obolibrary.org/obo/CHEBI_
+    cito: http://purl.org/spar/cito/
+    csvw: http://purl.org/csvw/vocab#
+    dblp: https://dblp.org/rdf/schema#
+    dc: http://purl.org/dc/elements/1.1/
+    dcat: http://www.w3.org/ns/dcat#
+    dcmit: http://purl.org/dc/dcmitype/
+    dcterms: http://purl.org/dc/terms/
+    ECO: http://purl.obolibrary.org/obo/ECO_
+    ensembl: http://rdf.ebi.ac.uk/resource/ensembl/
+    hydra: http://www.w3.org/ns/hydra/core#
+    faldo: http://biohackathon.org/resource/faldo#
+    foaf: http://xmlns.com/foaf/0.1/
+    genex: http://purl.org/genex#
+    go: http://purl.obolibrary.org/obo/GO_
+    mondo: http://purl.obolibrary.org/obo/MONDO_
+    np: http://www.nanopub.org/nschema#
+    npx: http://purl.org/nanopub/x/
+    obo: http://purl.obolibrary.org/obo/
+    oboInOwl: http://www.geneontology.org/formats/oboInOwl#
+    owl: http://www.w3.org/2002/07/owl#
+    pav: http://purl.org/pav/
+    prov: http://www.w3.org/ns/prov#
+    pubmed: http://purl.uniprot.org/pubmed/
+    qudt: http://qudt.org/schema/qudt/
+    rh: http://rdf.rhea-db.org/
+    schema: http://schema.org/
+    sd: http://www.w3.org/ns/sparql-service-description#
+    sh: http://www.w3.org/ns/shacl#
+    shex: http://www.w3.org/ns/shex#
+    sio: http://semanticscience.org/resource/
+    sioc: http://rdfs.org/sioc/ns#
+    skos: http://www.w3.org/2004/02/skos/core#
+    sp: http://spinrdf.org/sp#
+    stato: http://purl.obolibrary.org/obo/STATO_
+    taxon: http://purl.uniprot.org/taxonomy/
+    time: http://www.w3.org/2006/time#
+    uniparc: http://purl.uniprot.org/uniparc/
+    uniprot: http://purl.uniprot.org/uniprot/
+    up: http://purl.uniprot.org/core/
+    vcard: http://www.w3.org/2006/vcard/ns#
+    voag: http://voag.linkedmodel.org/schema/voag#
+    void: http://rdfs.org/ns/void#
+    wikibase: http://wikiba.se/ontology#
   map_view_url: https://qlever.dev/petrimaps/
   query_templates:
     subject_completion: |-
@@ -545,6 +476,8 @@ osm-planet:
     values_completion_context_insensitive: ''
     hover: ''
 imdb:
+  preset:
+  - common_prefixes
   name: IMDb
   url: https://qlever.dev/api/imdb
   engine: QLever
@@ -553,6 +486,61 @@ imdb:
   prefix_map:
     imdb: https://www.imdb.com/
     xsd: http://www.w3.org/2001/XMLSchema#
+    activitystreams: https://www.w3.org/ns/activitystreams#
+    bd: http://www.bigdata.com/rdf#
+    bibo: http://purl.org/ontology/bibo/
+    busco: http://busco.ezlab.org/schema#
+    chebi: http://purl.obolibrary.org/obo/CHEBI_
+    cito: http://purl.org/spar/cito/
+    csvw: http://purl.org/csvw/vocab#
+    dblp: https://dblp.org/rdf/schema#
+    dc: http://purl.org/dc/elements/1.1/
+    dcat: http://www.w3.org/ns/dcat#
+    dcmit: http://purl.org/dc/dcmitype/
+    dcterms: http://purl.org/dc/terms/
+    ECO: http://purl.obolibrary.org/obo/ECO_
+    ensembl: http://rdf.ebi.ac.uk/resource/ensembl/
+    hydra: http://www.w3.org/ns/hydra/core#
+    faldo: http://biohackathon.org/resource/faldo#
+    foaf: http://xmlns.com/foaf/0.1/
+    genex: http://purl.org/genex#
+    geo: http://www.opengis.net/ont/geosparql#
+    geof: http://www.opengis.net/def/function/geosparql/
+    go: http://purl.obolibrary.org/obo/GO_
+    mondo: http://purl.obolibrary.org/obo/MONDO_
+    np: http://www.nanopub.org/nschema#
+    npx: http://purl.org/nanopub/x/
+    obo: http://purl.obolibrary.org/obo/
+    oboInOwl: http://www.geneontology.org/formats/oboInOwl#
+    osmwiki: 'https://www.openstreetmap.org/wiki/Key:'
+    owl: http://www.w3.org/2002/07/owl#
+    pav: http://purl.org/pav/
+    prov: http://www.w3.org/ns/prov#
+    pubmed: http://purl.uniprot.org/pubmed/
+    qudt: http://qudt.org/schema/qudt/
+    rdf: http://www.w3.org/1999/02/22-rdf-syntax-ns#
+    rdfs: http://www.w3.org/2000/01/rdf-schema#
+    rh: http://rdf.rhea-db.org/
+    schema: http://schema.org/
+    sd: http://www.w3.org/ns/sparql-service-description#
+    sh: http://www.w3.org/ns/shacl#
+    shex: http://www.w3.org/ns/shex#
+    sio: http://semanticscience.org/resource/
+    sioc: http://rdfs.org/sioc/ns#
+    skos: http://www.w3.org/2004/02/skos/core#
+    sp: http://spinrdf.org/sp#
+    stato: http://purl.obolibrary.org/obo/STATO_
+    taxon: http://purl.uniprot.org/taxonomy/
+    time: http://www.w3.org/2006/time#
+    uniparc: http://purl.uniprot.org/uniparc/
+    uniprot: http://purl.uniprot.org/uniprot/
+    up: http://purl.uniprot.org/core/
+    vcard: http://www.w3.org/2006/vcard/ns#
+    voag: http://voag.linkedmodel.org/schema/voag#
+    void: http://rdfs.org/ns/void#
+    wd: http://www.wikidata.org/entity/
+    wdt: http://www.wikidata.org/prop/direct/
+    wikibase: http://wikiba.se/ontology#
   map_view_url: https://qlever.dev/petrimaps/
   query_templates:
     subject_completion: |-
@@ -745,6 +733,8 @@ imdb:
     values_completion_context_insensitive: ''
     hover: ''
 wikidata-qlever:
+  preset:
+  - common_prefixes
   name: Wikidata QLever
   url: https://qlever.dev/api/wikidata-qlever
   engine: QLever
@@ -787,54 +777,148 @@ wikidata-qlever:
     wdtn: http://www.wikidata.org/prop/direct-normalized/
     wikibase: http://wikiba.se/ontology#
     xsd: http://www.w3.org/2001/XMLSchema#
+    activitystreams: https://www.w3.org/ns/activitystreams#
+    bd: http://www.bigdata.com/rdf#
+    bibo: http://purl.org/ontology/bibo/
+    busco: http://busco.ezlab.org/schema#
+    chebi: http://purl.obolibrary.org/obo/CHEBI_
+    cito: http://purl.org/spar/cito/
+    csvw: http://purl.org/csvw/vocab#
+    dblp: https://dblp.org/rdf/schema#
+    dc: http://purl.org/dc/elements/1.1/
+    dcat: http://www.w3.org/ns/dcat#
+    dcmit: http://purl.org/dc/dcmitype/
+    ECO: http://purl.obolibrary.org/obo/ECO_
+    ensembl: http://rdf.ebi.ac.uk/resource/ensembl/
+    hydra: http://www.w3.org/ns/hydra/core#
+    faldo: http://biohackathon.org/resource/faldo#
+    foaf: http://xmlns.com/foaf/0.1/
+    genex: http://purl.org/genex#
+    go: http://purl.obolibrary.org/obo/GO_
+    mondo: http://purl.obolibrary.org/obo/MONDO_
+    np: http://www.nanopub.org/nschema#
+    npx: http://purl.org/nanopub/x/
+    obo: http://purl.obolibrary.org/obo/
+    oboInOwl: http://www.geneontology.org/formats/oboInOwl#
+    osmwiki: 'https://www.openstreetmap.org/wiki/Key:'
+    pav: http://purl.org/pav/
+    pubmed: http://purl.uniprot.org/pubmed/
+    qudt: http://qudt.org/schema/qudt/
+    rh: http://rdf.rhea-db.org/
+    sd: http://www.w3.org/ns/sparql-service-description#
+    sh: http://www.w3.org/ns/shacl#
+    shex: http://www.w3.org/ns/shex#
+    sio: http://semanticscience.org/resource/
+    sioc: http://rdfs.org/sioc/ns#
+    sp: http://spinrdf.org/sp#
+    stato: http://purl.obolibrary.org/obo/STATO_
+    taxon: http://purl.uniprot.org/taxonomy/
+    time: http://www.w3.org/2006/time#
+    uniparc: http://purl.uniprot.org/uniparc/
+    uniprot: http://purl.uniprot.org/uniprot/
+    up: http://purl.uniprot.org/core/
+    vcard: http://www.w3.org/2006/vcard/ns#
+    voag: http://voag.linkedmodel.org/schema/voag#
+    void: http://rdfs.org/ns/void#
   map_view_url: https://qlever.dev/petrimaps/
   query_templates:
-    subject_completion: "# subject completion\n{% for prefix in prefixes %}\nPREFIX\
-      \ {{prefix.0}}: <{{prefix.1}}>\n{% endfor %}\n{% if search_term %}\nPREFIX rdfs:\
-      \ <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX wikibase: <http://wikiba.se/ontology#>\n\
-      PREFIX skos: <http://www.w3.org/2004/02/skos/core#>\nPREFIX schema: <http://schema.org/>\n\
-      SELECT ?qlue_ls_entity (SAMPLE(?name) AS ?qlue_ls_label) (SAMPLE(?alias) AS\
-      \ ?qlue_ls_detail) (SAMPLE(?sitelinks) AS ?qlue_ls_count) WHERE {\n  {\n   \
-      \ SELECT ?qlue_ls_entity ?name ?alias WHERE {\n      ?qlue_ls_entity @en@rdfs:label\
-      \ ?name .\n      ?qlue_ls_entity @en@skos:altLabel ?alias .\n      {% if search_term_uncompressed\
-      \ %}\n      FILTER (REGEX(STR(?qlue_ls_entity), \"^{{ search_term_uncompressed\
-      \ }}\"))\n      {% elif search_term %}\n      FILTER (REGEX(STR(?name), \"^{{\
-      \ search_term }}\") || REGEX(STR(?alias), \"^{{ search_term }}\")) \n      {%\
-      \ endif %}\n    }\n  }\n  ?qlue_ls_entity ^schema:about ?m .\n  ?m wikibase:sitelinks\
-      \ ?sitelinks\n} GROUP BY ?qlue_ls_entity ORDER BY DESC(?qlue_ls_count)\n{% endif\
-      \ %}\nLIMIT {{ limit }} OFFSET {{ offset }}"
-    predicate_completion_context_sensitive: "# predicate completion sensitive\n{%\
-      \ for prefix in prefixes %}\nPREFIX {{prefix.0}}: <{{prefix.1}}>\n{% endfor\
-      \ %}\n{% if subject is not variable %}\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n\
-      PREFIX skos: <http://www.w3.org/2004/02/skos/core#>\nSELECT ?qlue_ls_entity\
-      \ (SAMPLE(?name) as ?qlue_ls_label) (SAMPLE(?count) as ?qlue_ls_count) WHERE\
-      \ {\n  {\n    SELECT ?qlue_ls_entity (COUNT(?qlue_ls_entity) AS ?count) WHERE\
-      \ {\n      {{ local_context }}\n    }\n    GROUP BY ?qlue_ls_entity \n  }\n\
-      \  {% if not search_term %}\n  ?qui_tmp_1 ?qui_tmp_2 ?qlue_ls_entity .\n  ?qui_tmp_1\
-      \ @en@rdfs:label ?name .\n  BIND (?name AS ?alias)\n  {% elif search_term_uncompressed\
-      \ %}\n  ?qui_tmp_1 ?qui_tmp_2 ?qlue_ls_entity .\n  ?qui_tmp_1 @en@rdfs:label\
-      \ ?name .\n  FILTER REGEX(STR(?qlue_ls_entity), \"{{ search_term_uncompressed\
-      \ }}\", \"i\")\n  {% else %}\n  ?qui_tmp_1 ?qui_tmp_2 ?qlue_ls_entity .\n  ?qui_tmp_1\
-      \ @en@rdfs:label ?name .\n  OPTIONAL { ?qui_tmp_1 @en@skos:altLabel ?alias }\n\
-      \  FILTER (REGEX(STR(?name), \"{{ search_term }}\", \"i\") || REGEX(STR(?alias),\
-      \ \"{{ search_term }}\", \"i\"))\n  {% endif %}\n}\nGROUP BY ?qlue_ls_entity\n\
-      ORDER BY DESC(?qlue_ls_count)\n{% else %}\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n\
-      PREFIX skos: <http://www.w3.org/2004/02/skos/core#>\nSELECT ?qlue_ls_entity\
-      \ (SAMPLE(?name) as ?qlue_ls_label) (SAMPLE(?count) as ?qlue_ls_count) WHERE\
-      \ {\n  {% if not context %}\n  {\n    SELECT ?qlue_ls_entity (COUNT(?qlue_ls_entity)\
-      \ AS ?count) WHERE {\n     {{ local_context }}\n    }\n    GROUP BY ?qlue_ls_entity\n\
-      \  }\n  {% else %}\n  {\n    SELECT ?qlue_ls_entity (COUNT(DISTINCT {{ subject\
-      \ }}) AS ?count) WHERE {\n     {{ context }} {{ local_context }}\n    }\n  \
-      \  GROUP BY ?qlue_ls_entity\n  }\n  {% endif %}\n  {% if not search_term %}\n\
-      \  ?qui_tmp_1 ?qui_tmp_2 ?qlue_ls_entity .\n  ?qui_tmp_1 @en@rdfs:label ?name\
-      \ .\n  BIND (?name AS ?alias)\n  {% elif search_term_uncompressed %}\n  ?qui_tmp_1\
-      \ ?qui_tmp_2 ?qlue_ls_entity .\n  ?qui_tmp_1 @en@rdfs:label ?name .\n  FILTER\
-      \ REGEX(STR(?qlue_ls_entity), \"{{ search_term_uncompressed }}\", \"i\")\n \
-      \ {% else %}\n  ?qui_tmp_1 ?qui_tmp_2 ?qlue_ls_entity .\n  ?qui_tmp_1 @en@rdfs:label\
-      \ ?name .\n  OPTIONAL { ?qui_tmp_1 @en@skos:altLabel ?alias }\n  FILTER (REGEX(STR(?name),\
-      \ \"{{ search_term }}\", \"i\") || REGEX(STR(?alias), \"{{ search_term }}\"\
-      , \"i\"))\n  {% endif %}\n}\nGROUP BY ?qlue_ls_entity\nORDER BY DESC(?qlue_ls_count)\n\
-      {% endif %}\nLIMIT {{ limit }} OFFSET {{ offset }}"
+    subject_completion: |-
+      # subject completion
+      {% for prefix in prefixes %}
+      PREFIX {{prefix.0}}: <{{prefix.1}}>
+      {% endfor %}
+      {% if search_term %}
+      PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+      PREFIX wikibase: <http://wikiba.se/ontology#>
+      PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+      PREFIX schema: <http://schema.org/>
+      SELECT ?qlue_ls_entity (SAMPLE(?name) AS ?qlue_ls_label) (SAMPLE(?alias) AS ?qlue_ls_detail) (SAMPLE(?sitelinks) AS ?qlue_ls_count) WHERE {
+        {
+          SELECT ?qlue_ls_entity ?name ?alias WHERE {
+            ?qlue_ls_entity @en@rdfs:label ?name .
+            ?qlue_ls_entity @en@skos:altLabel ?alias .
+            {% if search_term_uncompressed %}
+            FILTER (REGEX(STR(?qlue_ls_entity), "^{{ search_term_uncompressed }}"))
+            {% elif search_term %}
+            FILTER (REGEX(STR(?name), "^{{ search_term }}") || REGEX(STR(?alias), "^{{ search_term }}"))
+            {% endif %}
+          }
+        }
+        ?qlue_ls_entity ^schema:about ?m .
+        ?m wikibase:sitelinks ?sitelinks
+      } GROUP BY ?qlue_ls_entity ORDER BY DESC(?qlue_ls_count)
+      {% endif %}
+      LIMIT {{ limit }} OFFSET {{ offset }}
+    predicate_completion_context_sensitive: |-
+      # predicate completion sensitive
+      {% for prefix in prefixes %}
+      PREFIX {{prefix.0}}: <{{prefix.1}}>
+      {% endfor %}
+      {% if subject is not variable %}
+      PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+      PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+      SELECT ?qlue_ls_entity (SAMPLE(?name) as ?qlue_ls_label) (SAMPLE(?count) as ?qlue_ls_count) WHERE {
+        {
+          SELECT ?qlue_ls_entity (COUNT(?qlue_ls_entity) AS ?count) WHERE {
+            {{ local_context }}
+          }
+          GROUP BY ?qlue_ls_entity
+        }
+        {% if not search_term %}
+        ?qui_tmp_1 ?qui_tmp_2 ?qlue_ls_entity .
+        ?qui_tmp_1 @en@rdfs:label ?name .
+        BIND (?name AS ?alias)
+        {% elif search_term_uncompressed %}
+        ?qui_tmp_1 ?qui_tmp_2 ?qlue_ls_entity .
+        ?qui_tmp_1 @en@rdfs:label ?name .
+        FILTER REGEX(STR(?qlue_ls_entity), "{{ search_term_uncompressed }}", "i")
+        {% else %}
+        ?qui_tmp_1 ?qui_tmp_2 ?qlue_ls_entity .
+        ?qui_tmp_1 @en@rdfs:label ?name .
+        OPTIONAL { ?qui_tmp_1 @en@skos:altLabel ?alias }
+        FILTER (REGEX(STR(?name), "{{ search_term }}", "i") || REGEX(STR(?alias), "{{ search_term }}", "i"))
+        {% endif %}
+      }
+      GROUP BY ?qlue_ls_entity
+      ORDER BY DESC(?qlue_ls_count)
+      {% else %}
+      PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+      PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+      SELECT ?qlue_ls_entity (SAMPLE(?name) as ?qlue_ls_label) (SAMPLE(?count) as ?qlue_ls_count) WHERE {
+        {% if not context %}
+        {
+          SELECT ?qlue_ls_entity (COUNT(?qlue_ls_entity) AS ?count) WHERE {
+           {{ local_context }}
+          }
+          GROUP BY ?qlue_ls_entity
+        }
+        {% else %}
+        {
+          SELECT ?qlue_ls_entity (COUNT(DISTINCT {{ subject }}) AS ?count) WHERE {
+           {{ context }} {{ local_context }}
+          }
+          GROUP BY ?qlue_ls_entity
+        }
+        {% endif %}
+        {% if not search_term %}
+        ?qui_tmp_1 ?qui_tmp_2 ?qlue_ls_entity .
+        ?qui_tmp_1 @en@rdfs:label ?name .
+        BIND (?name AS ?alias)
+        {% elif search_term_uncompressed %}
+        ?qui_tmp_1 ?qui_tmp_2 ?qlue_ls_entity .
+        ?qui_tmp_1 @en@rdfs:label ?name .
+        FILTER REGEX(STR(?qlue_ls_entity), "{{ search_term_uncompressed }}", "i")
+        {% else %}
+        ?qui_tmp_1 ?qui_tmp_2 ?qlue_ls_entity .
+        ?qui_tmp_1 @en@rdfs:label ?name .
+        OPTIONAL { ?qui_tmp_1 @en@skos:altLabel ?alias }
+        FILTER (REGEX(STR(?name), "{{ search_term }}", "i") || REGEX(STR(?alias), "{{ search_term }}", "i"))
+        {% endif %}
+      }
+      GROUP BY ?qlue_ls_entity
+      ORDER BY DESC(?qlue_ls_count)
+      {% endif %}
+      LIMIT {{ limit }} OFFSET {{ offset }}
     predicate_completion_context_insensitive: |-
       # predicate completion insensitive
       {% for prefix in prefixes %}
