@@ -4,7 +4,11 @@
 // │ Licensed under the MIT license. │ \\
 // └─────────────────────────────────┘ \\
 
-import type { EndpointListResponse, QlueLsServiceConfig, SparqlEndpointConfiguration } from '../types/backend';
+import type {
+  EndpointListResponse,
+  QlueLsServiceConfig,
+  SparqlEndpointConfiguration,
+} from '../types/backend';
 import { MonacoLanguageClient } from 'monaco-languageclient';
 import { getPathParameters } from '../utils';
 import type { Editor } from '../editor/init';
@@ -73,13 +77,17 @@ export async function configureBackends(editor: Editor) {
       );
     }
     if (defaultEndpointSlug) {
-      await addService(editor.languageClient, defaultEndpointSlug, endpointConfigs[defaultEndpointSlug], true);
+      await addService(
+        editor.languageClient,
+        defaultEndpointSlug,
+        endpointConfigs[defaultEndpointSlug],
+        true
+      );
       backendSelector.value = defaultEndpointSlug;
       activeEndpointSlug = defaultEndpointSlug;
     } else {
       let firstConfig = Object.entries(endpointConfigs)[0];
       if (firstConfig) {
-
         // NOTE: the path did not match any service and there is no default service.
         await addService(editor.languageClient, firstConfig[0], firstConfig[1], true);
         backendSelector.value = firstConfig[0];

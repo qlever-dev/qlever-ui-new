@@ -29,7 +29,7 @@ export default defineConfig({
       '/ui-api': {
         target: 'http://localhost:8000',
         changeOrigin: true,
-      }
+      },
     },
   },
   plugins: [

@@ -28,7 +28,7 @@ export function loadStore(): BackendTabsStore | null {
   } catch {
     console.warn(
       `Corrupted tab data in localStorage ("${STORAGE_KEY}"). ` +
-      `Run localStorage.removeItem("${STORAGE_KEY}") in the console to reset.`
+        `Run localStorage.removeItem("${STORAGE_KEY}") in the console to reset.`
     );
     document.dispatchEvent(
       new CustomEvent('toast', {

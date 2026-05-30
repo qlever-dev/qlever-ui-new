@@ -56,8 +56,7 @@ export const line = d3
   .line()
   .x((d) => d[0])
   .y((d) => d[1])
-  .curve(d3.curveBundle.beta(1))
-  ;
+  .curve(d3.curveBundle.beta(1));
 
 export function setupWebSocket(urlStr: string, queryId: string): WebSocket {
   const url = new URL(urlStr);
@@ -66,23 +65,27 @@ export function setupWebSocket(urlStr: string, queryId: string): WebSocket {
   return new WebSocket(url);
 }
 
-
-export function activeSubTree(root: d3.HierarchyNode<QueryExecutionTree>): [d3.HierarchyNode<QueryExecutionNode>[], d3.HierarchyNode<QueryExecutionNode>[]] {
+export function activeSubTree(
+  root: d3.HierarchyNode<QueryExecutionTree>
+): [d3.HierarchyNode<QueryExecutionNode>[], d3.HierarchyNode<QueryExecutionNode>[]] {
   const stack = [root];
   const active = [];
   const inactive: d3.HierarchyNode<QueryExecutionNode>[] = [];
   while (stack.length != 0) {
     const node = stack.pop()!;
-    if (node.data.status === "lazily materialized in progress" || node.data.status === "fully materialized in progress") {
+    if (
+      node.data.status === 'lazily materialized in progress' ||
+      node.data.status === 'fully materialized in progress'
+    ) {
       active.push(node);
     } else {
       inactive.push(node);
     }
-    node.children?.forEach(child => {
-      if (child.data.status === "lazily materialized in progress") {
+    node.children?.forEach((child) => {
+      if (child.data.status === 'lazily materialized in progress') {
         stack.push(child);
       } else {
-        inactive.push(...child.descendants())
+        inactive.push(...child.descendants());
       }
     });
   }
@@ -100,4 +103,3 @@ export function findActiveNode(root: d3.HierarchyNode<QueryExecutionTree>) {
   }
   return node;
 }
-

@@ -69,7 +69,6 @@ function updateTree(
   queryExecutionTree: QueryExecutionTree,
   zoomTo: (x: number, y: number, duration: number) => void
 ) {
-
   const darkMode = localStorage.getItem('theme') === 'dark';
   const oldNodes = root!.descendants();
   const newRoot = d3.hierarchy<QueryExecutionTree>(queryExecutionTree);
@@ -282,7 +281,7 @@ function initializeTree(queryExectionTree: QueryExecutionNode) {
     .attr('y', -boxHeight / 2 + boxPadding)
     .attr('text-anchor', 'left')
     .attr('dominant-baseline', 'middle')
-    .each(function(d) {
+    .each(function (d) {
       fitText(this, replaceIRIs(d.data.description), boxWidth - 20);
     });
 
@@ -309,7 +308,7 @@ function initializeTree(queryExectionTree: QueryExecutionNode) {
     .attr('y', -boxHeight / 2 + boxPadding + 25)
     .attr('text-anchor', 'start')
     .attr('dominant-baseline', 'middle')
-    .each(function(d) {
+    .each(function (d) {
       fitText(this, d.data.column_names.join(', '), boxWidth - 55);
     });
 
@@ -415,7 +414,6 @@ function treeLayout(root: d3.HierarchyNode<QueryExecutionTree>) {
 type Layout = [number, number][][];
 
 function mergeLayout(layoutLeft: Layout, layoutRight: Layout): Layout {
-
   if (layoutLeft.length == 0 && layoutRight.length == 0) {
     return [[[0, 0]]];
   } else if (layoutRight.length == 0) {
@@ -425,10 +423,14 @@ function mergeLayout(layoutLeft: Layout, layoutRight: Layout): Layout {
   }
 
   const pushRight = Math.max(
-    ...d3.zip(layoutLeft, layoutRight).map(([left, right]) => left[left.length - 1][1] - right[0][0])
+    ...d3
+      .zip(layoutLeft, layoutRight)
+      .map(([left, right]) => left[left.length - 1][1] - right[0][0])
   );
 
-  layoutRight = layoutRight.map((block) => block.map(([left, right]) => [left + pushRight, right + pushRight]));
+  layoutRight = layoutRight.map((block) =>
+    block.map(([left, right]) => [left + pushRight, right + pushRight])
+  );
   const mergedLayout: Layout = [];
   for (let i = 0; i < Math.max(layoutRight.length, layoutLeft.length); i++) {
     if (layoutLeft[i] && layoutRight[i]) {

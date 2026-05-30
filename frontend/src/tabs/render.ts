@@ -33,7 +33,7 @@ export function renderTabBar(editor: Editor): void {
     }
 
     el.className = `group relative flex items-center gap-1 px-3 py-1.5 cursor-pointer select-none whitespace-nowrap border-b-2 transition-colors ${statusClasses}`;
-    el.setAttribute("data-tab-name", tab.id);
+    el.setAttribute('data-tab-name', tab.id);
 
     // Status dot (success / error).
     if (status === 'success' || status === 'error') {

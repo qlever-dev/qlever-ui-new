@@ -1,6 +1,6 @@
 export interface ExecuteUpdateResult {
-  operations: ExecuteUpdateResultEntry[],
-  time: ExecuteUpdateGlobalTimeStats
+  operations: ExecuteUpdateResultEntry[];
+  time: ExecuteUpdateGlobalTimeStats;
 }
 
 export interface ExecuteUpdateResultEntry {
@@ -12,14 +12,14 @@ export interface ExecuteUpdateResultEntry {
 }
 
 export interface ExecuteUpdateGlobalTimeStats {
-  total: number,
-  parsing: number,
-  waitingForUpdateThread: number,
-  acquiringDeltaTriplesWriteLock: number,
-  operations: number,
-  metadataUpdateForSnapshot: number,
-  diskWriteback: number,
-  snapshotCreation: number,
+  total: number;
+  parsing: number;
+  waitingForUpdateThread: number;
+  acquiringDeltaTriplesWriteLock: number;
+  operations: number;
+  metadataUpdateForSnapshot: number;
+  diskWriteback: number;
+  snapshotCreation: number;
 }
 
 export interface TimeInfo {

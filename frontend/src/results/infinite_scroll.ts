@@ -1,10 +1,9 @@
-import type { Editor } from "../editor/init";
+import type { Editor } from '../editor/init';
 import { settings } from '../settings/init';
-import type { ExecuteOperationResult } from "../types/lsp_messages";
-import type { ExecuteQueryEventDetails } from "./init";
-import { renderTableRows } from "./table";
-import { hideLoadingAnimation, showLoadingAnimation } from "./utils";
-
+import type { ExecuteOperationResult } from '../types/lsp_messages';
+import type { ExecuteQueryEventDetails } from './init';
+import { renderTableRows } from './table';
+import { hideLoadingAnimation, showLoadingAnimation } from './utils';
 
 let windowSize = 0;
 let offset = windowSize;
@@ -13,23 +12,20 @@ let pendingResults = false;
 let originalQuery: string | null = null;
 let originalQueryId: string | null = null;
 
-
 export function setupInfiniteScroll(editor: Editor) {
-
   window.addEventListener('scroll', () => onScroll(editor));
 
   window.addEventListener('execute-cancle-request', () => {
     if (mutex && originalQueryId != null) {
       const queryId = getSubQueryId(originalQueryId);
-      editor.languageClient.sendRequest('qlueLs/cancelQuery', { queryId })
-        .catch((err) => {
-          console.error('The query cancelation failed:', err);
-          document.dispatchEvent(
-            new CustomEvent('toast', {
-              detail: { type: 'error', message: 'Query could not be canceled', duration: 2000 },
-            })
-          );
-        });
+      editor.languageClient.sendRequest('qlueLs/cancelQuery', { queryId }).catch((err) => {
+        console.error('The query cancelation failed:', err);
+        document.dispatchEvent(
+          new CustomEvent('toast', {
+            detail: { type: 'error', message: 'Query could not be canceled', duration: 2000 },
+          })
+        );
+      });
     }
     originalQueryId = null;
     originalQuery = null;
@@ -50,7 +46,6 @@ export function setupInfiniteScroll(editor: Editor) {
     hideLoadingAnimation();
   });
 }
-
 
 async function onScroll(editor: Editor) {
   if (mutex || !pendingResults || originalQuery == null || originalQueryId == null) return;
@@ -75,7 +70,7 @@ async function onScroll(editor: Editor) {
         if (originalQueryId !== currentQueryId) {
           mutex = false;
           hideLoadingAnimation();
-          return
+          return;
         }
         const exec_result = result as ExecuteOperationResult;
         if ('queryResult' in exec_result) {
@@ -83,22 +78,26 @@ async function onScroll(editor: Editor) {
             pendingResults = false;
             mutex = false;
             hideLoadingAnimation();
-            return
-          } renderTableRows(exec_result.queryResult.result.head, exec_result.queryResult.result.results.bindings, offset);
+            return;
+          }
+          renderTableRows(
+            exec_result.queryResult.result.head,
+            exec_result.queryResult.result.results.bindings,
+            offset
+          );
           hideLoadingAnimation();
-        }
-        else {
+        } else {
           pendingResults = false;
           mutex = false;
           hideLoadingAnimation();
-          return
+          return;
         }
 
         offset += windowSize;
         mutex = false;
       })
       .catch((err) => {
-        console.error("An error ocurred while loading more results", err);
+        console.error('An error ocurred while loading more results', err);
         pendingResults = false;
         mutex = false;
         hideLoadingAnimation();

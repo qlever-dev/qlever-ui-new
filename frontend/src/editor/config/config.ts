@@ -4,7 +4,11 @@
 // │ Licensed under the MIT license. │ \\
 // └─────────────────────────────────┘ \\
 
-import { useWorkerFactory, Worker as WorkerDescriptor, type WorkerLoader } from 'monaco-languageclient/workerFactory';
+import {
+  useWorkerFactory,
+  Worker as WorkerDescriptor,
+  type WorkerLoader,
+} from 'monaco-languageclient/workerFactory';
 import { type EditorAppConfig } from 'monaco-languageclient/editorApp';
 import { type MonacoVscodeApiConfig } from 'monaco-languageclient/vscodeApiWrapper';
 import { type LanguageClientConfig } from 'monaco-languageclient/lcwrapper';

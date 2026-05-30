@@ -141,14 +141,14 @@ export async function getShareLinkId(query: string): Promise<string> {
 /** Fetches the saved query text for the given short ID from the share API. */
 export async function getSharedQuery(id: string): Promise<string> {
   return await apiFetch(`shared-query/${id}`)
-    .then(response => {
+    .then((response) => {
       if (!response.ok) {
         throw new Error(`Could not get query with ID "${id}".`);
       }
       return response.json();
     })
-    .then(json => json.query)
-    .catch(err => {
+    .then((json) => json.query)
+    .catch((err) => {
       console.log(err);
       document.dispatchEvent(
         new CustomEvent('toast', {

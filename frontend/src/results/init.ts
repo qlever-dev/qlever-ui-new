@@ -133,11 +133,7 @@ async function executeQueryAndShowResults(editor: Editor) {
 
 // Executes the query in a layz manner.
 // Returns the time the query took end-to-end.
-async function executeQuery(
-  editor: Editor,
-  pageSize: number,
-  offset: number = 0
-): Promise<number> {
+async function executeQuery(editor: Editor, pageSize: number, offset: number = 0): Promise<number> {
   const query = editor.getContent();
   const queryId =
     crypto.randomUUID?.() ?? `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
@@ -146,7 +142,7 @@ async function executeQuery(
       detail: {
         queryId,
         query,
-        pageSize
+        pageSize,
       },
     })
   );

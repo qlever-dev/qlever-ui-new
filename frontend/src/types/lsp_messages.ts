@@ -59,7 +59,7 @@ export type ExecuteOperationResult =
 
 export interface ExecuteQueryResult {
   timeMs: number;
-  result: SPARQLResults
+  result: SPARQLResults;
 }
 
 export type PartialResult = { header: Header } | { bindings: Binding[] } | { meta: Meta };

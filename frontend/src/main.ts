@@ -45,4 +45,3 @@ setupEditor('editor').then(async (editor) => {
   handleRequestParameter(editor);
   removeLoadingScreen();
 });
-

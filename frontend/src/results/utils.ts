@@ -19,7 +19,8 @@ export function showQueryMetaData(meta: Meta) {
 
   if (meta['query-time-ms']) {
     document.getElementById('queryTimeComputeContainer')!.classList.remove('hidden');
-    document.getElementById('queryTimeCompute')!.innerText = meta['query-time-ms'].toLocaleString('en-US') + 'ms';
+    document.getElementById('queryTimeCompute')!.innerText =
+      meta['query-time-ms'].toLocaleString('en-US') + 'ms';
   }
 }
 

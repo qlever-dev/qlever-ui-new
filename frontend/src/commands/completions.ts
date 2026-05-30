@@ -29,7 +29,8 @@ export function setupCommandCompletions(
   // Create the completion list element
   list = document.createElement('ul');
   list.id = 'commandCompletionList';
-  list.className = 'max-h-60 overflow-y-auto list-none m-0 p-0 hidden border-t border-neutral-400 dark:border-white';
+  list.className =
+    'max-h-60 overflow-y-auto list-none m-0 p-0 hidden border-t border-neutral-400 dark:border-white';
   // Append to the outer rounded container, not the input's immediate relative wrapper
   commandPrompt.closest('.flex.flex-col.overflow-hidden')!.appendChild(list);
 
@@ -38,7 +39,8 @@ export function setupCommandCompletions(
   for (const name of commandNames) {
     const { description } = commands[name];
     const li = document.createElement('li');
-    li.className = 'px-4 h-10 cursor-pointer text-sm text-neutral-700 dark:text-neutral-200 hover:bg-neutral-300 dark:hover:bg-neutral-600 flex items-center justify-between gap-3';
+    li.className =
+      'px-4 h-10 cursor-pointer text-sm text-neutral-700 dark:text-neutral-200 hover:bg-neutral-300 dark:hover:bg-neutral-600 flex items-center justify-between gap-3';
 
     const nameSpan = document.createElement('span');
     nameSpan.className = 'font-mono';
@@ -163,4 +165,3 @@ export function show() {
   selectedIndex = -1;
   list.classList.remove('hidden');
 }
-
