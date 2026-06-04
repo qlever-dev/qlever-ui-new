@@ -193,15 +193,10 @@ async def create_endpoint(
             slug, endpoint.model_dump(mode="json", exclude_none=True)
         )
         logger.info(f'Created new SPARQL endpoint config "{slug}".')
-        return created_endpoint
-    except ValueError:
-        logger.warning(
-            f'A SPARQL endpoint with slug "{slug}" already exists, operation aborted.'
-        )
-        raise HTTPException(
-            status_code=409,
-            detail=f'A SPARQL endpoint with slug "{slug}" already exists.',
-        )
+        return SparqlEndpointConfiguration.model_validate(created_endpoint)
+    except ValueError as e:
+        logger.warning(f'Could not create SPARQL endpoint "{slug}": {e}')
+        raise HTTPException(status_code=409, detail=str(e))
 
 
 @router.get("/endpoints/{slug}/examples/")

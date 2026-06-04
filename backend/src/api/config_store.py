@@ -107,6 +107,7 @@ def _minimize(
     """Strip override values that exactly match what the preset chain provides.
     Per-key for dict values, equality for scalars. `preset` itself is preserved."""
     preset_names = raw.get("preset") or []
+
     baseline = _baseline(preset_names, presets)
     out: dict[str, Any] = {}
     if preset_names:
@@ -192,7 +193,7 @@ class ConfigStore:
         async with self._lock:
             return self._resolved
 
-    async def create(self, slug: str, config: dict[str, Any]):
+    async def create(self, slug: str, config: dict[str, Any]) -> dict[str, Any]:
         async with self._lock:
             if slug in self._raw:
                 raise ValueError(f"config with slug {slug} already exists.")
@@ -210,6 +211,7 @@ class ConfigStore:
             self._raw = new_raw
             self._resolved = new_resolved
             self._persist(affected)
+            return self._resolved[slug]
 
     async def patch(
         self, slug: str, apply: Callable[[dict[str, Any]], dict[str, Any]]
