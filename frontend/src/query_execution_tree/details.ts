@@ -140,15 +140,11 @@ function costSection(node: QueryExecutionNode): HTMLElement {
 }
 
 function detailsSection(details: Record<string, any>): HTMLElement {
-  const section = document.createElement('div');
-  section.className = 'mb-2';
-  section.append(sectionLabel('Details'));
-  const pre = document.createElement('pre');
-  pre.className =
-    'mt-1 rounded bg-gray-100 dark:bg-gray-800 p-2 text-xs font-mono whitespace-pre-wrap break-words text-gray-800 dark:text-neutral-200';
-  pre.textContent = JSON.stringify(details, null, 2);
-  section.append(pre);
-  return section;
+  const rows = Object.entries(details).map(([key, value]): [string, HTMLElement] => [
+    key,
+    text(typeof value === 'object' && value !== null ? JSON.stringify(value) : String(value)),
+  ]);
+  return keyValueSection('Details', rows);
 }
 
 function keyValueSection(title: string, rows: [string, HTMLElement][]): HTMLElement {
