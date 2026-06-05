@@ -100,10 +100,12 @@ async def lifespan(_: FastAPI):
     logger.info("API key:               %s", "set" if API_KEY else "not set")
     config_count = await config_store.load()
     query_count = query_store.count()
+    example_count = example_store.count()
     logger.info(
         f"Loaded {config_count} endpoint config{'s' if config_count > 0 else ''}."
     )
     logger.info(f"Loaded {query_count} shared querie{'s' if query_count > 0 else ''}.")
+    logger.info(f"Loaded {example_count} example{'s' if example_count > 0 else ''}.")
     yield
     db.close()
     logger.info("Database connection closed")

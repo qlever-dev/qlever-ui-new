@@ -114,6 +114,12 @@ class ExampleStore:
                 highest = max(highest, int(m.group(1)))
         return f"example-{highest + 1:03d}.rq"
 
+    def count(self) -> int:
+        """Total number of example queries across all endpoints."""
+        if not self._base_dir.is_dir():
+            return 0
+        return sum(1 for _ in self._base_dir.glob("*/*.rq"))
+
     def list(self, slug: str) -> list[tuple[str, str]]:
         """Return (name, query) pairs for an endpoint, or [] if it has none."""
         slug_dir = self._slug_dir(slug)
