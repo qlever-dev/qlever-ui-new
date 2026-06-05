@@ -1,0 +1,35 @@
+@prefix ex:   <http://example.org/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+# A tiny, self-contained movie graph used to back the e2e tests with a local
+# SPARQL engine (Oxigraph). Entity ranking in completions is driven by the
+# number of outgoing triples, so the "hero" entities below are deliberately
+# richer than the rest to keep completion order deterministic.
+
+ex:meryl_streep
+    rdfs:label "Meryl Streep"@en ;
+    ex:actedIn ex:the_iron_lady, ex:the_hours, ex:mamma_mia .
+
+ex:the_iron_lady
+    rdfs:label "The Iron Lady"@en ;
+    ex:hasGenre ex:drama ;
+    ex:director ex:phyllida_lloyd ;
+    ex:releaseYear "2011" .
+
+ex:the_hours
+    rdfs:label "The Hours"@en ;
+    ex:hasGenre ex:drama ;
+    ex:director ex:stephen_daldry ;
+    ex:releaseYear "2002" .
+
+ex:mamma_mia
+    rdfs:label "Mamma Mia!"@en ;
+    ex:hasGenre ex:musical ;
+    ex:director ex:phyllida_lloyd ;
+    ex:releaseYear "2008" .
+
+ex:drama   rdfs:label "Drama"@en .
+ex:musical rdfs:label "Musical"@en .
+
+ex:phyllida_lloyd rdfs:label "Phyllida Lloyd"@en .
+ex:stephen_daldry rdfs:label "Stephen Daldry"@en .

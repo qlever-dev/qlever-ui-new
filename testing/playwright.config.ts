@@ -80,6 +80,14 @@ export default defineConfig({
     {
       command: 'cd ../backend/ && uv run uvicorn api.main:app --app-dir src/ --port 8000',
       url: 'http://127.0.0.1:8000/ui-api/health',
+      env: { CONFIG_PATH: '../testing/fixtures/config.yaml' },
+      reuseExistingServer: !process.env.CI,
+    },
+    {
+      // Local SPARQL engine seeded with the test dataset, replacing the live
+      // WWW endpoint the suite used to depend on.
+      command: './fixtures/serve-sparql.sh',
+      url: 'http://127.0.0.1:7878/',
       reuseExistingServer: !process.env.CI,
     },
   ],

@@ -45,6 +45,12 @@ jobs:
       if: steps.playwright-cache.outputs.cache-hit == 'true'
       working-directory: testing
       run: npx playwright install-deps
+    - name: Install Oxigraph (local SPARQL endpoint for e2e tests)
+      run: |
+        sudo curl -fsSL -o /usr/local/bin/oxigraph \
+          https://github.com/oxigraph/oxigraph/releases/download/v0.5.8/oxigraph_v0.5.8_x86_64_linux_gnu
+        sudo chmod +x /usr/local/bin/oxigraph
+        oxigraph --version
     - name: Run Playwright tests
       working-directory: testing
       run: npx playwright test

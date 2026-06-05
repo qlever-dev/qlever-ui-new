@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Cosmetic changes to the Query-execution-tree
 - update qlue-ls
+- e2e tests now run against a local Oxigraph instance seeded with a fixture dataset (`testing/fixtures/`), removing the dependency on a live WWW SPARQL endpoint (requires the `oxigraph` CLI on `PATH`)
 
 
 ## [0.2.2] - 2026-04-11

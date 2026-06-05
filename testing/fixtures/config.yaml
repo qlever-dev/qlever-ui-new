@@ -1,0 +1,84 @@
+test:
+  name: Test (Oxigraph)
+  url: http://127.0.0.1:7878/query
+  default: true
+  sort_key: A1
+  prefix_map:
+    ex: http://example.org/
+  query_templates:
+    subject_completion: |-
+      {% include "prefix_declarations" %}
+      PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+      SELECT ?qlue_ls_entity (SAMPLE(?label) AS ?qlue_ls_label) (COUNT(*) AS ?qlue_ls_count) WHERE {
+        ?qlue_ls_entity rdfs:label ?label .
+        ?qlue_ls_entity ?p ?o .
+        FILTER (LANG(?label) = "en")
+        {% if search_term %}
+        FILTER (REGEX(STR(?label), "^{{ search_term }}", "i"))
+        {% endif %}
+      }
+      GROUP BY ?qlue_ls_entity
+      ORDER BY DESC(?qlue_ls_count)
+      LIMIT {{ limit }} OFFSET {{ offset }}
+    predicate_completion_context_sensitive: |-
+      {% include "prefix_declarations" %}
+      PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+      SELECT ?qlue_ls_entity (SAMPLE(?label) AS ?qlue_ls_label) (COUNT(*) AS ?qlue_ls_count) WHERE {
+        {% if context %}{{ context }}{% endif %}
+        {{ local_context }}
+        OPTIONAL { ?qlue_ls_entity rdfs:label ?label FILTER (LANG(?label) = "en") }
+        {% if search_term_uncompressed %}
+        FILTER (REGEX(STR(?qlue_ls_entity), "^{{ search_term_uncompressed }}", "i"))
+        {% elif search_term %}
+        FILTER (REGEX(STR(?qlue_ls_entity), "{{ search_term }}", "i") || REGEX(STR(?label), "{{ search_term }}", "i"))
+        {% endif %}
+      }
+      GROUP BY ?qlue_ls_entity
+      ORDER BY DESC(?qlue_ls_count)
+      LIMIT {{ limit }} OFFSET {{ offset }}
+    predicate_completion_context_insensitive: |-
+      {% include "prefix_declarations" %}
+      PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+      SELECT ?qlue_ls_entity (SAMPLE(?label) AS ?qlue_ls_label) (COUNT(*) AS ?qlue_ls_count) WHERE {
+        {{ local_context }}
+        OPTIONAL { ?qlue_ls_entity rdfs:label ?label FILTER (LANG(?label) = "en") }
+        {% if search_term_uncompressed %}
+        FILTER (REGEX(STR(?qlue_ls_entity), "^{{ search_term_uncompressed }}", "i"))
+        {% elif search_term %}
+        FILTER (REGEX(STR(?qlue_ls_entity), "{{ search_term }}", "i") || REGEX(STR(?label), "{{ search_term }}", "i"))
+        {% endif %}
+      }
+      GROUP BY ?qlue_ls_entity
+      ORDER BY DESC(?qlue_ls_count)
+      LIMIT {{ limit }} OFFSET {{ offset }}
+    object_completion_context_sensitive: |-
+      {% include "prefix_declarations" %}
+      PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+      SELECT ?qlue_ls_entity (SAMPLE(?label) AS ?qlue_ls_label) (COUNT(*) AS ?qlue_ls_count) WHERE {
+        {% if context %}{{ context }}{% endif %}
+        {{ local_context }}
+        OPTIONAL { ?qlue_ls_entity rdfs:label ?label FILTER (LANG(?label) = "en") }
+        {% if search_term_uncompressed %}
+        FILTER (REGEX(STR(?qlue_ls_entity), "^{{ search_term_uncompressed }}", "i"))
+        {% elif search_term %}
+        FILTER (REGEX(STR(?qlue_ls_entity), "{{ search_term }}", "i") || REGEX(STR(?label), "{{ search_term }}", "i"))
+        {% endif %}
+      }
+      GROUP BY ?qlue_ls_entity
+      ORDER BY DESC(?qlue_ls_count)
+      LIMIT {{ limit }} OFFSET {{ offset }}
+    object_completion_context_insensitive: |-
+      {% include "prefix_declarations" %}
+      PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+      SELECT ?qlue_ls_entity (SAMPLE(?label) AS ?qlue_ls_label) (COUNT(*) AS ?qlue_ls_count) WHERE {
+        {{ local_context }}
+        OPTIONAL { ?qlue_ls_entity rdfs:label ?label FILTER (LANG(?label) = "en") }
+        {% if search_term_uncompressed %}
+        FILTER (REGEX(STR(?qlue_ls_entity), "^{{ search_term_uncompressed }}", "i"))
+        {% elif search_term %}
+        FILTER (REGEX(STR(?qlue_ls_entity), "{{ search_term }}", "i") || REGEX(STR(?label), "{{ search_term }}", "i"))
+        {% endif %}
+      }
+      GROUP BY ?qlue_ls_entity
+      ORDER BY DESC(?qlue_ls_count)
+      LIMIT {{ limit }} OFFSET {{ offset }}

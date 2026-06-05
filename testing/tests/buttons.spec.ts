@@ -1,19 +1,20 @@
 import { test, expect } from '@playwright/test';
 
 test('clear cache button', async ({ page }) => {
-  await page.goto('./wikidata');
+  await page.goto('./test');
   await expect(page.locator('#loadingScreen')).toHaveCount(0, { timeout: 15000 });
-  await page.click("#clearCacheButton");
-  const request = await page.waitForResponse(
-    req => {
-      return req.request().method() === 'POST'
-    });
-  expect(request).toBeTruthy();
+  // Register the response waiter before clicking: the cache-clear POST to the
+  // local endpoint can resolve before a waiter added afterwards would subscribe.
+  const [response] = await Promise.all([
+    page.waitForResponse((res) => res.request().method() === 'POST'),
+    page.click('#clearCacheButton'),
+  ]);
+  expect(response).toBeTruthy();
 });
 
 
 test('format button', async ({ page }) => {
-  await page.goto('./wikidata');
+  await page.goto('./test');
   await expect(page.locator('#loadingScreen')).toHaveCount(0, { timeout: 15000 });
   await page.getByRole('textbox', { name: 'Editor content' }).type('SELECT   * WHERE { ?s     ?p ?o}');
   await page.click('#formatButton');
