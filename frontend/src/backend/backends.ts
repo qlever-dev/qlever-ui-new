@@ -112,7 +112,7 @@ export async function configureBackends(editor: Editor) {
         backendName: backendSelector.value,
       })
       .then(() => {
-        history.pushState({}, '', `/${backendSelector.value}`);
+        history.pushState({}, '', `${BASE_PATH}${backendSelector.value}`);
         document.dispatchEvent(
           new CustomEvent('backend-selected', { detail: backendSelector.value })
         );
