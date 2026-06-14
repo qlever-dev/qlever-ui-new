@@ -42,6 +42,17 @@ export function getInputByPath(path: string[]): HTMLInputElement {
   return document.getElementById(['settings', ...path].join('-'))! as HTMLInputElement;
 }
 
+export function hasPath(obj: object, path: string[]): boolean {
+  let current: unknown = obj;
+  for (const key of path) {
+    if (typeof current !== 'object' || current === null || !(key in current)) {
+      return false;
+    }
+    current = (current as Record<string, unknown>)[key];
+  }
+  return true;
+}
+
 export function setByPath(obj: object, path: string[], value: unknown) {
   let current = obj as Record<string, unknown>;
 

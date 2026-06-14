@@ -65,7 +65,4 @@ export interface ResultsSettings {
 
 export interface GeneralSettings {
   accessToken: string | null;
-  uiMode: UiMode;
 }
-
-export type UiMode = 'results' | 'compare';

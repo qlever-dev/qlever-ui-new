@@ -1,13 +1,10 @@
 services:
   ui:
-    build:
-      context: .
-      args:
-        GIT_COMMIT: ${GIT_COMMIT:-}
+    image: ghcr.io/qlever-dev/qlever-ui-new:edge
     volumes:
-      - data:/app/data
+        - ./config.default.yaml:/app/config.yaml
     ports:
-      - 7000:7000
+      - 80:7000
 
       # If the APP should be available on your HOST add this:
 
@@ -26,6 +23,3 @@ services:
 # networks:
 #   proxy:
 #     external: true
-
-volumes:
-  data:

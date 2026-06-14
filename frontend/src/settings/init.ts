@@ -1,11 +1,10 @@
 import type { Editor } from '../editor/init';
 import type { UiSettings } from '../types/settings';
-import { getInputByPath, handleClickEvents, setByPath, walk } from './utils';
+import { getInputByPath, handleClickEvents, hasPath, setByPath, walk } from './utils';
 
 export const settings: UiSettings = {
   general: {
     accessToken: '',
-    uiMode: 'results',
   },
   editor: {
     format: {
@@ -84,7 +83,7 @@ function updateDom() {
 }
 
 function handleInput(editor: Editor) {
-  const stringFields = ['accessToken', 'uiMode'];
+  const stringFields = ['accessToken'];
   const nullableFields = ['compact', 'variableCompletionLimit'];
   walk(
     settings,
@@ -143,7 +142,11 @@ function loadFromLocalStorage() {
   if (storedQlueLsSettings) {
     const newSettings = JSON.parse(storedQlueLsSettings);
     walk(newSettings, (path, value) => {
-      setByPath(settings, path, value);
+      // Ignore stored keys that no longer exist (e.g. removed settings),
+      // otherwise updateDom would look up a missing DOM input and crash.
+      if (hasPath(settings, path)) {
+        setByPath(settings, path, value);
+      }
     });
   }
 }

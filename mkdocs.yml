@@ -1,0 +1,46 @@
+site_name: Qlever-UI
+site_description: A modern WebUI for SPARQL, powered by the Qlue-ls language server.
+repo_url: https://github.com/qlever-dev/qlue-ui
+repo_name: qlever-dev/qlue-ui
+
+theme:
+  name: material
+  palette:
+    scheme: slate
+    primary: black
+  features:
+    - navigation.sections
+    - navigation.top
+    - navigation.footer
+    - content.code.copy
+    - search.suggest
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+
+nav:
+  - Home: index.md
+  - Setup:
+      - Docker: setup/docker.md
+  - Configuration:
+      - SPARQL Endpoints: configuration/endpoints.md
+      - Example Queries: configuration/examples.md
+      - Settings: configuration/settings.md
+  - Features:
+      - Overview: features/index.md
+      - Editor: features/editor.md
+      - Results: features/results.md
+      - Query Analysis: features/analysis.md
+      - Workbench: features/workbench.md
