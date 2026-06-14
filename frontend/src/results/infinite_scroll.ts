@@ -74,7 +74,7 @@ async function onScroll(editor: Editor) {
         }
         const exec_result = result as ExecuteOperationResult;
         if ('queryResult' in exec_result) {
-          if (exec_result.queryResult.result.results.bindings.length == 0) {
+          if (exec_result.queryResult.result.results.bindings.length === 0) {
             pendingResults = false;
             mutex = false;
             hideLoadingAnimation();

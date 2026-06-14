@@ -1,9 +1,9 @@
 // NOTE: Parse tree panel lifecycle — open/close, layout toggling, and listener management.
 
 import type { IDisposable } from 'monaco-editor';
+import { applyPanelWidth, toggleWideMode } from '../buttons/wide_mode';
 import type { Editor } from '../editor/init';
 import type { ParseTreeElement, ParseTreeResult } from '../types/parse_tree';
-import { applyPanelWidth, toggleWideMode } from '../buttons/wide_mode';
 import { clearHighlights, highlightRowsAtCursor, initDecorations } from './highlight';
 import { renderElement } from './render';
 
@@ -149,7 +149,7 @@ function closeParseTree() {
 
   // NOTE: Relayout Monaco after the panel closes.
   setTimeout(() => {
-    (window as any).__editor?.editorApp.getEditor()?.layout();
+    window.__editor?.editorApp.getEditor()?.layout();
   }, 50);
 
   // NOTE: Remove URL search paramerter.

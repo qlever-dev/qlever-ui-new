@@ -7,14 +7,14 @@
   "scripts": {
     "build": "NODE_OPTIONS='--max-old-space-size=8192' vite build",
     "dev": "vite dev --host 0.0.0.0",
-    "lint": "prettier -c .",
-    "format": "prettier -w ."
+    "lint": "biome check .",
+    "format": "biome check --write ."
   },
   "keywords": [],
   "description": "",
   "devDependencies": {
+    "@biomejs/biome": "2.5.0",
     "@types/d3": "7.4.3",
-    "prettier": "3.8.3",
     "typescript": "6.0.3",
     "vite": "8.0.16",
     "vite-plugin-checker": "0.14.1",

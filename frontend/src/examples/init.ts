@@ -1,7 +1,7 @@
+import { apiFetch } from '../api';
 import type { Editor } from '../editor/init';
 import { setupKeywordSearch } from './keyword_search';
 import { clearExamples, handleClickEvents } from './utils';
-import { apiFetch } from '../api';
 
 interface QueryExample {
   name: string;
@@ -27,7 +27,7 @@ export async function loadExamples(editor: Editor, serviceSlug: string) {
   const examplesList = document.getElementById('examplesList')!;
   const examplesModal = document.getElementById('examplesModal')!;
 
-  let examples = (await apiFetch(`endpoints/${serviceSlug}/examples/`)
+  const examples = (await apiFetch(`endpoints/${serviceSlug}/examples/`)
     .then((response) => {
       if (!response.ok) {
         throw new Error(

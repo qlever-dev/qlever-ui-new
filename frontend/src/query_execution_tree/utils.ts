@@ -43,13 +43,13 @@ export function fitText(node: SVGTextElement, text: string, maxWidth: number) {
   let hi = text.length;
   while (lo < hi) {
     const mid = Math.ceil((lo + hi) / 2);
-    if (measurementCtx.measureText(text.substring(0, mid) + '…').width <= maxWidth) {
+    if (measurementCtx.measureText(`${text.substring(0, mid)}…`).width <= maxWidth) {
       lo = mid;
     } else {
       hi = mid - 1;
     }
   }
-  node.textContent = text.substring(0, lo) + '…';
+  node.textContent = `${text.substring(0, lo)}…`;
 }
 
 export const line = d3
@@ -61,7 +61,7 @@ export const line = d3
 export function setupWebSocket(urlStr: string, queryId: string): WebSocket {
   const url = new URL(urlStr);
   url.protocol = url.protocol === 'https:' ? 'wss:' : 'ws:';
-  url.pathname = url.pathname.replace(/\/$/, '') + `/watch/${queryId}`;
+  url.pathname = `${url.pathname.replace(/\/$/, '')}/watch/${queryId}`;
   return new WebSocket(url);
 }
 
@@ -71,7 +71,7 @@ export function activeSubTree(
   const stack = [root];
   const active = [];
   const inactive: d3.HierarchyNode<QueryExecutionNode>[] = [];
-  while (stack.length != 0) {
+  while (stack.length !== 0) {
     const node = stack.pop()!;
     if (
       node.data.status === 'lazily materialized in progress' ||

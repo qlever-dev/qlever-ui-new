@@ -11,7 +11,7 @@ export type NodeStatus =
   | 'lazily materialized in progress'
   | 'lazily materialized completed';
 
-export type NodeDetails = Record<string, any>;
+export type NodeDetails = Record<string, unknown>;
 
 export interface QueryExecutionNode {
   /** Unique ID. */

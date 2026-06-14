@@ -1,8 +1,8 @@
 import type { Editor } from '../editor/init';
-import type { TabState } from './types';
 import { closeTab, createTab, switchTab } from './operations';
-import { state } from './state';
 import { startRename } from './render';
+import { state } from './state';
+import type { TabState } from './types';
 
 export interface TabMenuItem {
   label: string;
@@ -130,8 +130,8 @@ function douplicateTab(editor: Editor, tab: TabState) {
 }
 
 async function closeAfter(editor: Editor, trigger_tab: TabState) {
-  const trigger_tab_idx = state.tabs.findIndex((tab) => tab.id == trigger_tab.id);
-  const active_tab_idx = state.tabs.findIndex((tab) => tab.id == state.activeTabId);
+  const trigger_tab_idx = state.tabs.findIndex((tab) => tab.id === trigger_tab.id);
+  const active_tab_idx = state.tabs.findIndex((tab) => tab.id === state.activeTabId);
   if (active_tab_idx > trigger_tab_idx) {
     await switchTab(editor, trigger_tab.id);
   }
@@ -142,8 +142,8 @@ async function closeAfter(editor: Editor, trigger_tab: TabState) {
 }
 
 async function closeBefore(editor: Editor, trigger_tab: TabState) {
-  const trigger_tab_idx = state.tabs.findIndex((tab) => tab.id == trigger_tab.id);
-  const active_tab_idx = state.tabs.findIndex((tab) => tab.id == state.activeTabId);
+  const trigger_tab_idx = state.tabs.findIndex((tab) => tab.id === trigger_tab.id);
+  const active_tab_idx = state.tabs.findIndex((tab) => tab.id === state.activeTabId);
   if (active_tab_idx < trigger_tab_idx) {
     await switchTab(editor, trigger_tab.id);
   }
@@ -155,7 +155,7 @@ async function closeBefore(editor: Editor, trigger_tab: TabState) {
 
 async function closeOthers(editor: Editor, id: string) {
   await switchTab(editor, id);
-  const idsToClose = state.tabs.filter((t) => t.id != id).map((t) => t.id);
+  const idsToClose = state.tabs.filter((t) => t.id !== id).map((t) => t.id);
   for (const closeId of idsToClose) {
     await closeTab(editor, closeId);
   }

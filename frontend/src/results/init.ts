@@ -25,16 +25,16 @@ import { setupInfiniteScroll } from './infinite_scroll';
 import { renderTableHeader, renderTableRows } from './table';
 import {
   clearQueryStats,
+  escapeHtml,
+  hideFullResultButton,
   type QueryStatus,
   scrollToResults,
   showLoadingScreen,
+  showMapViewButton,
   showQueryMetaData,
   showResults,
   startQueryTimer,
   stopQueryTimer,
-  showMapViewButton,
-  escapeHtml,
-  hideFullResultButton,
 } from './utils';
 
 const pageSize = 100;
@@ -57,9 +57,9 @@ let queryStatus: QueryStatus = 'idle';
 
 export async function setupResults(editor: Editor) {
   window.addEventListener('cancel-or-execute', () => {
-    if (queryStatus == 'running') {
+    if (queryStatus === 'running') {
       window.dispatchEvent(new Event('execute-cancle-request'));
-    } else if (queryStatus == 'idle') {
+    } else if (queryStatus === 'idle') {
       window.dispatchEvent(new CustomEvent('execute-start-request'));
     }
   });
@@ -69,7 +69,7 @@ export async function setupResults(editor: Editor) {
 
 function handleSignals(editor: Editor) {
   window.addEventListener('execute-start-request', () => {
-    if (queryStatus == 'idle') {
+    if (queryStatus === 'idle') {
       queryStatus = 'running';
       window.dispatchEvent(new CustomEvent('execute-started'));
       executeQueryAndShowResults(editor);
@@ -120,7 +120,7 @@ async function executeQueryAndShowResults(editor: Editor) {
     .then((timeMs) => {
       showResults();
       stopQueryTimer(timer);
-      document.getElementById('queryTimeTotal')!.innerText = timeMs.toLocaleString('en-US') + 'ms';
+      document.getElementById('queryTimeTotal')!.innerText = `${timeMs.toLocaleString('en-US')}ms`;
       window.dispatchEvent(new CustomEvent('execute-ended', { detail: { result: 'success' } }));
     })
     .catch(() => {
@@ -162,7 +162,7 @@ async function executeQuery(editor: Editor, pageSize: number, offset: number = 0
       });
   });
 
-  let response = (await editor.languageClient
+  const response = (await editor.languageClient
     .sendRequest('qlueLs/executeOperation', {
       textDocument: {
         uri: editor.getDocumentUri(),
@@ -231,7 +231,7 @@ async function executeQuery(editor: Editor, pageSize: number, offset: number = 0
 }
 
 function renderUpdateResult(result: ExecuteUpdateResult) {
-  let head = { vars: ['insertions', 'deletions'] };
+  const head = { vars: ['insertions', 'deletions'] };
   renderTableHeader(head);
   renderTableRows(
     head,

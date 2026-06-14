@@ -4,16 +4,15 @@
 // │ Licensed under the MIT license. │ \\
 // └─────────────────────────────────┘ \\
 
+import type { MonacoLanguageClient } from 'monaco-languageclient';
+import { apiFetch } from '../api';
+import type { Editor } from '../editor/init';
 import type {
   EndpointListResponse,
   QlueLsServiceConfig,
   SparqlEndpointConfiguration,
 } from '../types/backend';
-import { MonacoLanguageClient } from 'monaco-languageclient';
-import { getPathParameters } from '../utils';
-import type { Editor } from '../editor/init';
-import { apiFetch } from '../api';
-import { BASE_PATH } from '../utils';
+import { BASE_PATH, getPathParameters } from '../utils';
 
 const endpointConfigPromise: Promise<EndpointListResponse> = apiFetch('endpoints/')
   .then((response) => {
@@ -55,7 +54,7 @@ export async function configureBackends(editor: Editor) {
 
   // NOTE: find default service then fetch & load its configuration (blocking)
   for (const [slug, config] of Object.entries(endpointConfigs)) {
-    const is_active = path_slug == slug || (path_slug == undefined && config.default);
+    const is_active = path_slug === slug || (path_slug === undefined && config.default);
     backendSelector.add(new Option(config.name, slug, false, is_active));
     activeEndpointSlug = is_active ? slug : activeEndpointSlug;
     if (config.default) {
@@ -65,7 +64,7 @@ export async function configureBackends(editor: Editor) {
   }
   if (activeEndpointSlug == null) {
     // NOTE: path slug was provided but did not match any known backend
-    if (path_slug != undefined) {
+    if (path_slug !== undefined) {
       history.replaceState(null, '', BASE_PATH);
       document.dispatchEvent(
         new CustomEvent('toast', {
@@ -86,7 +85,7 @@ export async function configureBackends(editor: Editor) {
       backendSelector.value = defaultEndpointSlug;
       activeEndpointSlug = defaultEndpointSlug;
     } else {
-      let firstConfig = Object.entries(endpointConfigs)[0];
+      const firstConfig = Object.entries(endpointConfigs)[0];
       if (firstConfig) {
         // NOTE: the path did not match any service and there is no default service.
         await addService(editor.languageClient, firstConfig[0], firstConfig[1], true);

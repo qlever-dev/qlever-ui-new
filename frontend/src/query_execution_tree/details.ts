@@ -139,7 +139,7 @@ function costSection(node: QueryExecutionNode): HTMLElement {
   ]);
 }
 
-function detailsSection(details: Record<string, any>): HTMLElement {
+function detailsSection(details: Record<string, unknown>): HTMLElement {
   const rows = Object.entries(details).map(([key, value]): [string, HTMLElement] => [
     key,
     text(typeof value === 'object' && value !== null ? JSON.stringify(value) : String(value)),

@@ -17,7 +17,7 @@
 import * as d3 from 'd3';
 
 export function animateGradients() {
-  const defs = d3.select<SVGElement, any>('#queryExecutionTreeSvg').append('defs');
+  const defs = d3.select<SVGElement, unknown>('#queryExecutionTreeSvg').append('defs');
   const filter = defs.append('filter').attr('id', 'glow');
   filter.append('feGaussianBlur').attr('stdDeviation', 5).attr('result', 'coloredBlur');
 

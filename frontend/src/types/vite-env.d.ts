@@ -1,6 +1,14 @@
+import type { Editor } from '../editor/init';
+
 declare module '*?init' {
-  const init: any;
+  const init: (...args: unknown[]) => Promise<unknown>;
   export default init;
 }
 
-declare const __GIT_COMMIT__: string;
+declare global {
+  interface Window {
+    __editor?: Editor;
+  }
+
+  const __GIT_COMMIT__: string;
+}

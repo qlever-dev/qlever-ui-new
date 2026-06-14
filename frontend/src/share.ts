@@ -1,6 +1,6 @@
+import { apiFetch } from './api';
 import type { Editor } from './editor/init';
 import type { QlueLsServiceConfig } from './types/backend';
-import { apiFetch } from './api';
 
 /**
  * Initializes the share modal. Clicking the share button generates multiple

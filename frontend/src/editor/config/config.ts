@@ -4,20 +4,20 @@
 // │ Licensed under the MIT license. │ \\
 // └─────────────────────────────────┘ \\
 
+import { Uri } from 'monaco-editor';
+import editorWorkerUrl from 'monaco-editor/esm/vs/editor/editor.worker?worker&url';
+import type { EditorAppConfig } from 'monaco-languageclient/editorApp';
+import type { LanguageClientConfig } from 'monaco-languageclient/lcwrapper';
+import type { MonacoVscodeApiConfig } from 'monaco-languageclient/vscodeApiWrapper';
 import {
   useWorkerFactory,
   Worker as WorkerDescriptor,
   type WorkerLoader,
 } from 'monaco-languageclient/workerFactory';
-import { type EditorAppConfig } from 'monaco-languageclient/editorApp';
-import { type MonacoVscodeApiConfig } from 'monaco-languageclient/vscodeApiWrapper';
-import { type LanguageClientConfig } from 'monaco-languageclient/lcwrapper';
-import editorWorkerUrl from 'monaco-editor/esm/vs/editor/editor.worker?worker&url';
 import languageServerWorker from './languageServer.worker?worker';
 import sparqlLanguageConfig from './sparql.configuration.json?raw';
-import sparqlThemeLight from './sparql.theme.light.json?raw';
 import sparqlThemeDark from './sparql.theme.dark.json?raw';
-import { Uri } from 'monaco-editor';
+import sparqlThemeLight from './sparql.theme.light.json?raw';
 
 export async function buildWrapperConfig(initial: string) {
   const worker = await loadLanguageServerWorker();

@@ -5,14 +5,14 @@
 // └─────────────────────────────────┘ \\
 
 import * as monaco from 'monaco-editor';
+import { openCommandPrompt } from '../commands/utils';
+import { closeAllModals } from '../keybindings';
+import { settings } from '../settings/init';
+import { openSettings } from '../settings/utils';
 import type { FormattingResult, JumpResult } from '../types/lsp_messages';
 import type { Edit } from '../types/monaco';
 import type { Editor } from './init';
-import { settings } from '../settings/init';
 import { toMonacoRange } from './utils';
-import { openCommandPrompt } from '../commands/utils';
-import { openSettings } from '../settings/utils';
-import { closeAllModals } from '../keybindings';
 
 export function setup_key_bindings(editor: Editor) {
   const monacoEditor = editor.editorApp.getEditor()!;

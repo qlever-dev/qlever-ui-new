@@ -1,7 +1,7 @@
-import { defineConfig } from 'vite';
-import { execSync } from 'child_process';
-import checker from 'vite-plugin-checker';
+import { execSync } from 'node:child_process';
 import tailwindcss from '@tailwindcss/vite';
+import { defineConfig } from 'vite';
+import checker from 'vite-plugin-checker';
 import wasm from 'vite-plugin-wasm';
 
 let gitCommitHash = process.env.VITE_GIT_COMMIT || '';

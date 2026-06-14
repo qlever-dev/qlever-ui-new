@@ -178,7 +178,9 @@ def cmd_examples(args):
             target.write_text(_build_example_content(name, query))
         print(f"  wrote {len(items):>3} examples to {slug_dir}/", file=sys.stderr)
         total += len(items)
-    print(f"Migrated {total} examples across {len(by_slug)} endpoints.", file=sys.stderr)
+    print(
+        f"Migrated {total} examples across {len(by_slug)} endpoints.", file=sys.stderr
+    )
 
 
 # ── shared queries ─────────────────────────────────────────────────────────
@@ -240,7 +242,9 @@ def cmd_shared_queries(args):
         conflicts = [ident for ident, _ in normalized if ident in existing_ids]
         if conflicts:
             preview = "\n".join(f"  - {c}" for c in conflicts[:20])
-            tail = f"\n  ... ({len(conflicts) - 20} more)" if len(conflicts) > 20 else ""
+            tail = (
+                f"\n  ... ({len(conflicts) - 20} more)" if len(conflicts) > 20 else ""
+            )
             sys.exit(
                 f"Aborting: {len(conflicts)} identifier(s) already exist in target:\n"
                 f"{preview}{tail}"
@@ -251,10 +255,7 @@ def cmd_shared_queries(args):
             tgt_conn.executemany(
                 "INSERT INTO shared_query (id, query, query_hash, creation_date) "
                 "VALUES (?, ?, ?, ?)",
-                [
-                    (ident, q, _hash_query(q), today)
-                    for ident, q in normalized
-                ],
+                [(ident, q, _hash_query(q), today) for ident, q in normalized],
             )
     finally:
         tgt_conn.close()

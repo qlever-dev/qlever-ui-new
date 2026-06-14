@@ -1,21 +1,21 @@
-import type { Editor } from '../editor/init';
 import { clearCache } from '../buttons/clear_cache';
 import { executeQuery } from '../buttons/execute';
 import { formatDocument } from '../buttons/format';
+import { toggleWideMode } from '../buttons/wide_mode';
+import type { Editor } from '../editor/init';
 import { openExamples } from '../examples/utils';
 import { openParseTree } from '../parse_tree/init';
 import { openQueryExecutionTree } from '../query_execution_tree/init';
 import { openTemplatesEditor } from '../templates/init';
-import { toggleWideMode } from '../buttons/wide_mode';
 import { displayVersion } from '../utils';
-import { closeCommandPrompt, handleClickEvents } from './utils';
-import { createExample, updateExample } from './examples';
 import {
-  setupCommandCompletions,
   handleKey as completionsHandleKey,
   hide as completionsHide,
   show as completionsShow,
+  setupCommandCompletions,
 } from './completions';
+import { createExample, updateExample } from './examples';
+import { closeCommandPrompt, handleClickEvents } from './utils';
 
 type CommandHandler = (editor: Editor, params: string[]) => void;
 export interface Command {
@@ -66,7 +66,7 @@ export function setupCommands(editor: Editor) {
           new CustomEvent('toast', {
             detail: {
               type: 'error',
-              message: 'Unknown command: ' + command,
+              message: `Unknown command: ${command}`,
               duration: 3000,
             },
           })
@@ -87,9 +87,7 @@ export function setupCommands(editor: Editor) {
 /** Splits input into command name + quoted arguments. Unquoted words are kept as-is. */
 function parseInput(input: string): string[] {
   const tokens: string[] = [];
-  const regex = /"([^"]*)"|\S+/g;
-  let match;
-  while ((match = regex.exec(input)) !== null) {
+  for (const match of input.matchAll(/"([^"]*)"|\S+/g)) {
     tokens.push(match[1] ?? match[0]);
   }
   return tokens;

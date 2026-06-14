@@ -1,10 +1,10 @@
 // NOTE: Template editor panel lifecycle — open/close, selector, and LS communication.
 
 import * as monaco from 'monaco-editor';
+import { apiFetch, clearApiKey, getApiKey } from '../api';
+import { applyPanelWidth, toggleWideMode } from '../buttons/wide_mode';
 import type { Editor } from '../editor/init';
 import type { QlueLsServiceConfig } from '../types/backend';
-import { applyPanelWidth, toggleWideMode } from '../buttons/wide_mode';
-import { apiFetch, clearApiKey, getApiKey } from '../api';
 
 const DEBOUNCE_MS = 300;
 
@@ -276,6 +276,6 @@ function closeTemplatesEditor() {
 
   // NOTE: Relayout Monaco after the panel closes.
   setTimeout(() => {
-    (window as any).__editor?.editorApp.getEditor()?.layout();
+    window.__editor?.editorApp.getEditor()?.layout();
   }, 50);
 }

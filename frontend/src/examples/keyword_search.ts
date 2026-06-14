@@ -5,7 +5,7 @@
 // └──────────────────────────────────────┘ \\
 
 import { debounce } from '../utils';
-import { parseKeywords, matchesAllKeywords, highlightMatches } from '../utils/fuzzy_filter';
+import { highlightMatches, matchesAllKeywords, parseKeywords } from '../utils/fuzzy_filter';
 
 export function setupKeywordSearch() {
   const examplesModal = document.getElementById('examplesModal')!;
@@ -43,7 +43,7 @@ export function setupKeywordSearch() {
       } else if (event.key === 'ArrowUp') {
         examplesFiltered[selectedExample].classList.remove(...hoverClasses);
         selectedExample = selectedExample - 1;
-        if (selectedExample == -1) {
+        if (selectedExample === -1) {
           selectedExample = examplesFiltered.length - 1;
         }
         examplesFiltered[selectedExample].classList.add(...hoverClasses);
@@ -100,8 +100,6 @@ export function setupKeywordSearch() {
       element.classList.remove('keyword-search-match');
       element.classList.remove('hidden');
       element.classList.remove(...hoverClasses);
-      // NOTE: This removes inner styling.
-      element.innerText = element.innerText;
     });
   }
 

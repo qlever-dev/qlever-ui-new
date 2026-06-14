@@ -5,14 +5,14 @@
 // └─────────────────────────────────┘ \\
 
 import './style.css';
+import * as monaco from 'monaco-editor';
+import type { MonacoLanguageClient } from 'monaco-languageclient';
+import { EditorApp } from 'monaco-languageclient/editorApp';
+import { LanguageClientWrapper } from 'monaco-languageclient/lcwrapper';
+import { MonacoVscodeApiWrapper } from 'monaco-languageclient/vscodeApiWrapper';
+import { setup_commands } from './commands';
 import { buildWrapperConfig } from './config/config';
 import { setup_key_bindings } from './keys';
-import { setup_commands } from './commands';
-import { MonacoVscodeApiWrapper } from 'monaco-languageclient/vscodeApiWrapper';
-import { LanguageClientWrapper } from 'monaco-languageclient/lcwrapper';
-import { EditorApp } from 'monaco-languageclient/editorApp';
-import { MonacoLanguageClient } from 'monaco-languageclient';
-import * as monaco from 'monaco-editor';
 
 /**
  * Wrapper around the Monaco editor and its LSP language client.
@@ -52,11 +52,11 @@ export async function setupEditor(container_id: string): Promise<Editor> {
     // NOTE: Create and start the editor app.
     const editorApp = new EditorApp(configs.editorAppConfig);
 
-    let editor: Editor = {
+    const editor: Editor = {
       editorApp: editorApp,
       languageClient: languageClient,
       getContent(): string {
-        return this.editorApp.getEditor()?.getValue()!;
+        return this.editorApp.getEditor()?.getValue() ?? '';
       },
       setContent(content: string) {
         this.editorApp.getEditor()?.setValue(content);

@@ -1,8 +1,8 @@
 import type { Editor } from '../editor/init';
 import { getShareLinkId } from '../share';
 import {
-  SparqlEngine,
   type IdentifyOperationTypeResult,
+  SparqlEngine,
   type SparqlService,
 } from '../types/lsp_messages';
 
@@ -34,24 +34,24 @@ function toast(type: 'info' | 'warning' | 'error' | 'success', message: string) 
 
 async function downloadResults(editor: Editor, format: DownloadFormat) {
   // NOTE: Check for empty query.
-  let query = editor.getContent();
+  const query = editor.getContent();
   if (query.trim() === '') {
     toast('warning', 'There is no query to execute :(');
     return;
   }
 
   // NOTE: Check operation type.
-  let response = (await editor.languageClient.sendRequest('qlueLs/identifyOperationType', {
+  const response = (await editor.languageClient.sendRequest('qlueLs/identifyOperationType', {
     textDocument: {
       uri: editor.getDocumentUri(),
     },
   })) as IdentifyOperationTypeResult;
-  if (response.operationType != 'Query') {
+  if (response.operationType !== 'Query') {
     toast('warning', 'This is not a query.<br>There is nothing to download.');
     return;
   }
 
-  let sparqlService = await editor.languageClient
+  const sparqlService = await editor.languageClient
     .sendRequest('qlueLs/getBackend', {})
     .then((response) => {
       const typedResponse = response as SparqlService | { error: string };

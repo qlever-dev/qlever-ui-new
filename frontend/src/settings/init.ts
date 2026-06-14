@@ -2,7 +2,7 @@ import type { Editor } from '../editor/init';
 import type { UiSettings } from '../types/settings';
 import { getInputByPath, handleClickEvents, setByPath, walk } from './utils';
 
-export let settings: UiSettings = {
+export const settings: UiSettings = {
   general: {
     accessToken: '',
     uiMode: 'results',
@@ -75,7 +75,7 @@ function updateDom() {
           input.checked = value;
           break;
         default:
-          input.value = value === null ? '' : value;
+          input.value = value === null ? '' : String(value);
           break;
       }
     },
@@ -109,7 +109,7 @@ function handleInput(editor: Editor) {
             } else if (stringFields.includes(fieldName)) {
               newValue = input.value;
             } else {
-              newValue = parseInt(input.value);
+              newValue = parseInt(input.value, 10);
             }
             setByPath(settings, path, newValue);
             saveToLocalStorage();

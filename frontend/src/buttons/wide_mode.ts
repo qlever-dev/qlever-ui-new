@@ -53,7 +53,7 @@ export function setupWideMode() {
 
     // NOTE: Relayout Monaco after width change.
     setTimeout(() => {
-      (window as any).__editor?.editorApp.getEditor()?.layout();
+      window.__editor?.editorApp.getEditor()?.layout();
     }, 50);
   });
 }

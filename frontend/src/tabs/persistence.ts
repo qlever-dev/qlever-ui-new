@@ -4,9 +4,9 @@
 // │ Licensed under the MIT license. │ \\
 // └─────────────────────────────────┘ \\
 
+import { currentSlug, state, store } from './state';
 import type { BackendTabsStore } from './types';
 import { SAVE_DEBOUNCE_MS, STORAGE_KEY } from './types';
-import { currentSlug, state, store } from './state';
 
 let saveTimer: ReturnType<typeof setTimeout> | null = null;
 

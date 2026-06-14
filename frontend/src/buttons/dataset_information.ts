@@ -45,7 +45,7 @@ async function loadDatasetInformation(editor: Editor): Promise<void> {
     throw new Error('No backend was configured.');
   }
 
-  if (service.engine != SparqlEngine.QLever) {
+  if (service.engine !== SparqlEngine.QLever) {
     throw new Error('Dataset information is only availiable for QLever-based Backends.');
   }
   fetch(`${service.url}?cmd=stats`)

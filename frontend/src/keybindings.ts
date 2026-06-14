@@ -1,9 +1,9 @@
-import { closeExamples } from './examples/utils';
+import { closeDatasetInformation } from './buttons/dataset_information';
 import { closeHelp, openHelp } from './buttons/help';
+import { closeCommandPrompt, openCommandPrompt } from './commands/utils';
+import { closeExamples } from './examples/utils';
 import { closeSettings, openSettings } from './settings/utils';
 import { closeShare } from './share';
-import { closeDatasetInformation } from './buttons/dataset_information';
-import { closeCommandPrompt, openCommandPrompt } from './commands/utils';
 
 type Shortcut = {
   ctrl?: boolean; // true if Ctrl must be pressed

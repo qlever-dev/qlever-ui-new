@@ -5,7 +5,8 @@
 // └─────────────────────────────────┘ \\
 
 import type { Editor } from '../editor/init';
-import type { ExampleOrigin, TabState } from './types';
+import { saveState } from './persistence';
+import { renderTabBar } from './render';
 import {
   activeTab,
   currentSlug,
@@ -22,8 +23,7 @@ import {
   tabBar,
   tabQueryStatus,
 } from './state';
-import { saveState } from './persistence';
-import { renderTabBar } from './render';
+import type { ExampleOrigin, TabState } from './types';
 
 // ── Internal tab mutations (consumed by render.ts click handlers) ────────
 
@@ -51,7 +51,7 @@ export async function createTab(editor: Editor, name?: string, content?: string)
   // NOTE: If the current tab is empty -> reuse it
   const old_content = editor.getContent();
   const tab = activeTab();
-  if (old_content.trim() === '' && content != undefined) {
+  if (old_content.trim() === '' && content !== undefined) {
     tab.content = content;
     editor.editorApp.updateCodeResources({
       modified: { uri: tab.uri, text: tab.content },

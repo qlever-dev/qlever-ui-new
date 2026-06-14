@@ -1,6 +1,6 @@
 import type { Editor } from './editor/init';
 import { openParseTree } from './parse_tree/init';
-import { getShareLinkId, getSharedQuery } from './share';
+import { getSharedQuery, getShareLinkId } from './share';
 import { openOrCreateTab } from './tabs/init';
 import type { QlueLsServiceConfig } from './types/backend';
 import { BASE_PATH, getPathParameters } from './utils';
@@ -49,7 +49,7 @@ export function setupUrlSync(editor: Editor) {
     const shareId = await getShareLinkId(query).catch(() => null);
     if (!shareId) return;
     let [slug] = getPathParameters();
-    if (slug == undefined) {
+    if (slug === undefined) {
       // NOTE: get backend slug if path parameter is empty.
       const backend = (await editor.languageClient.sendRequest(
         'qlueLs/getBackend',

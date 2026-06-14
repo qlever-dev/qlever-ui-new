@@ -19,7 +19,7 @@ export async function renderTableHeader(head: Head) {
   thIndex.className = 'text-left p-2 w-10';
   headerRow.appendChild(thIndex);
 
-  for (let selectedVar of head.vars) {
+  for (const selectedVar of head.vars) {
     const th = document.createElement('th');
     th.textContent = selectedVar;
     th.className = 'text-left p-2 truncate min-w-24';
@@ -54,7 +54,7 @@ export function renderTableRows(head: Head, bindings: Binding[], offset: number 
 }
 
 function renderValue(value: BindingValue | undefined): HTMLTableCellElement {
-  if (value != undefined) {
+  if (value !== undefined) {
     switch (value.type) {
       case 'uri':
         return renderUri(value);
@@ -85,7 +85,7 @@ function renderLiteral(value: LiteralValue): HTMLTableCellElement {
   ) {
     td.textContent = parseFloat(value.value).toLocaleString('en-US');
   } else {
-    td.textContent = value.value.length > 200 ? value.value.substring(0, 200) + '...' : value.value;
+    td.textContent = value.value.length > 200 ? `${value.value.substring(0, 200)}...` : value.value;
   }
   td.title = td.textContent;
 
@@ -169,12 +169,12 @@ function copyOnClick(td: HTMLTableCellElement, value: string) {
 function getShortDatatype(datatype: string): string {
   const xsdPrefix = 'http://www.w3.org/2001/XMLSchema#';
   if (datatype.startsWith(xsdPrefix)) {
-    return 'xsd:' + datatype.slice(xsdPrefix.length);
+    return `xsd:${datatype.slice(xsdPrefix.length)}`;
   }
   const match = datatype.match(/[#/]([^#/]+)$/);
   return match ? match[1] : datatype;
 }
 
 function isNumericString(str: string): boolean {
-  return !isNaN(Number(str)) && !isNaN(parseFloat(str));
+  return !Number.isNaN(Number(str)) && !Number.isNaN(parseFloat(str));
 }

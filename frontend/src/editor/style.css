@@ -14,35 +14,35 @@
 
 /* Larger action widget */
 .action-widget {
-  min-width: 250px !important;
+  min-width: 250px;
 }
 
 /* Responsive suggest widget */
 .monaco-editor .suggest-widget {
-  width: min(600px, calc(100vw - 32px)) !important;
-  min-width: min(300px, calc(100vw - 32px)) !important;
-  max-width: calc(100vw - 32px) !important;
+  width: min(600px, calc(100vw - 32px));
+  min-width: min(300px, calc(100vw - 32px));
+  max-width: calc(100vw - 32px);
 }
 
 /* Mobile adjustments for suggest widget */
 @media (max-width: 640px) {
   .monaco-editor .suggest-widget {
-    width: calc(100vw - 24px) !important;
-    min-width: calc(100vw - 24px) !important;
-    left: 12px !important;
-    right: 12px !important;
+    width: calc(100vw - 24px);
+    min-width: calc(100vw - 24px);
+    left: 12px;
+    right: 12px;
   }
 
   /* Tighter padding on mobile */
   .monaco-editor .suggest-widget .monaco-list-row {
-    padding-left: 4px !important;
-    padding-right: 4px !important;
+    padding-left: 4px;
+    padding-right: 4px;
   }
 }
 
 /* Right-align labelDetail in completion items */
 .monaco-editor .suggest-widget .monaco-icon-label-container {
-  display: flex !important;
+  display: flex;
   justify-content: space-between;
   width: 100%;
 }

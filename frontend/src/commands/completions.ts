@@ -1,4 +1,4 @@
-import { parseKeywords, matchesAllKeywords, highlightMatches } from '../utils/fuzzy_filter';
+import { highlightMatches, matchesAllKeywords, parseKeywords } from '../utils/fuzzy_filter';
 import type { Command } from './init';
 
 const hoverClasses = ['bg-neutral-300', 'dark:bg-neutral-700'];
@@ -12,7 +12,7 @@ interface Item {
 }
 
 let list: HTMLUListElement;
-let items: Item[] = [];
+const items: Item[] = [];
 let filtered: Item[] = [];
 let selectedIndex = -1;
 let onExecute: ((name: string) => void) | null = null;

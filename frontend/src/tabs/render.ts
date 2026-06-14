@@ -5,10 +5,10 @@
 // └─────────────────────────────────┘ \\
 
 import type { Editor } from '../editor/init';
-import type { TabState } from './types';
+import { showTabContextMenu } from './context_menu';
 import { closeTab, createTab, renameTab, switchTab } from './operations';
 import { state, tabBar, tabQueryStatus } from './state';
-import { showTabContextMenu } from './context_menu';
+import type { TabState } from './types';
 
 export function renderTabBar(editor: Editor): void {
   tabBar.innerHTML = '';

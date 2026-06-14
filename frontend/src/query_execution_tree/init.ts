@@ -4,11 +4,14 @@
 // │ Licensed under the MIT license. │ \\
 // └─────────────────────────────────┘ \\
 
-import type { QueryExecutionTree } from '../types/query_execution_tree';
 import * as d3 from 'd3';
-import { setupWebSocket } from './utils';
+import { clearCache } from '../buttons/clear_cache';
+import type { Editor } from '../editor/init';
 import type { ExecuteQueryEventDetails } from '../results/init';
+import type { QlueLsServiceConfig } from '../types/backend';
 import { SparqlEngine } from '../types/lsp_messages';
+import type { QueryExecutionTree } from '../types/query_execution_tree';
+import { isDetailsVisible, setupNodeDetailsPanel } from './details';
 import { animateGradients } from './gradients';
 import {
   clearQueryExecutionTree,
@@ -16,10 +19,7 @@ import {
   renderQueryExecutionTree,
   setupAutozoom,
 } from './tree';
-import { isDetailsVisible, setupNodeDetailsPanel } from './details';
-import { clearCache } from '../buttons/clear_cache';
-import type { Editor } from '../editor/init';
-import type { QlueLsServiceConfig } from '../types/backend';
+import { setupWebSocket } from './utils';
 
 const margin = { top: 20, right: 20, bottom: 20, left: 20 };
 let visible = false;
@@ -74,7 +74,7 @@ export function setupQueryExecutionTree(editor: Editor) {
   const height = window.innerHeight;
 
   const svg = d3
-    .select<SVGElement, any>('#queryExecutionTreeSvg')
+    .select<SVGElement, unknown>('#queryExecutionTreeSvg')
     .attr('width', width)
     .attr('height', height);
   const container = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
@@ -94,7 +94,7 @@ export function setupQueryExecutionTree(editor: Editor) {
       container.attr('transform', event.transform);
     });
 
-  // @ts-ignore
+  // @ts-expect-error
   svg.call(zoom);
 
   animateGradients();
@@ -114,7 +114,7 @@ export function setupQueryExecutionTree(editor: Editor) {
       .transition()
       .duration(duration)
       .ease(d3.easeLinear)
-      // @ts-ignore
+      // @ts-expect-error
       .call(zoom.transform, targetTransform);
   }
 
@@ -124,7 +124,7 @@ export function setupQueryExecutionTree(editor: Editor) {
       {}
     )) as QlueLsServiceConfig;
     // NOTE: Only connect to websocket if service-engine is QLever
-    if (service.engine != SparqlEngine.QLever) {
+    if (service.engine !== SparqlEngine.QLever) {
       document.dispatchEvent(
         new CustomEvent('toast', {
           detail: {
@@ -138,7 +138,7 @@ export function setupQueryExecutionTree(editor: Editor) {
     }
     queryTreeModal.classList.remove('hidden');
     visible = true;
-    // @ts-ignore
+    // @ts-expect-error
     svg.call(zoom.translateTo, 0, 0);
     document.body.classList.add('overflow-y-hidden');
   });
@@ -161,7 +161,7 @@ export function setupQueryExecutionTree(editor: Editor) {
       {}
     )) as QlueLsServiceConfig;
     // NOTE: Only connect to websocket if service-engine is QLever
-    if (service.engine != SparqlEngine.QLever) {
+    if (service.engine !== SparqlEngine.QLever) {
       return;
     }
 

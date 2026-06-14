@@ -29,8 +29,9 @@
  */
 
 import type { Editor } from '../editor/init';
-import type { ExampleOrigin, TabQueryStatus } from './types';
-import { DEFAULT_URI } from './types';
+import { renameActiveTab, switchBackend } from './operations';
+import { debouncedSave, loadStore, saveState } from './persistence';
+import { renderTabBar } from './render';
 import {
   activeTab,
   currentSlug,
@@ -47,12 +48,9 @@ import {
   store,
   tabQueryStatus,
 } from './state';
-import { debouncedSave, loadStore, saveState } from './persistence';
-import { renameActiveTab, switchBackend } from './operations';
-import { renderTabBar } from './render';
+import type { ExampleOrigin, TabQueryStatus } from './types';
+import { DEFAULT_URI } from './types';
 
-// Re-exports — external consumers should import from `./tabs/init`.
-export type { ExampleOrigin };
 export {
   getActiveTabExampleOrigin,
   getActiveTabName,
@@ -61,6 +59,8 @@ export {
   switchToNextTab,
   switchToPrevTab,
 } from './operations';
+// Re-exports — external consumers should import from `./tabs/init`.
+export type { ExampleOrigin };
 
 /**
  * Initializes the tabs module. Wires up:

@@ -2,9 +2,9 @@
 // Tree → editor: hovering a tree row highlights the corresponding span in the editor.
 // Editor → tree: moving the cursor highlights all tree rows whose range contains it.
 
-import * as monaco from 'monaco-editor';
-import type { Range } from '../types/lsp_messages';
+import type * as monaco from 'monaco-editor';
 import { toMonacoRange } from '../editor/utils';
+import type { Range } from '../types/lsp_messages';
 
 let hoverDecorations: monaco.editor.IEditorDecorationsCollection | null = null;
 

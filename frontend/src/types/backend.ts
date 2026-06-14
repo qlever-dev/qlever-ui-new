@@ -10,7 +10,7 @@ export interface QlueLsServiceConfig {
   default: boolean;
   prefixMap: Record<string, string>;
   queries: CompletionTemplates;
-  additionalData: any;
+  additionalData: { mapViewUrl?: string };
 }
 
 // --- Types derived from the UI-API Swagger spec ---

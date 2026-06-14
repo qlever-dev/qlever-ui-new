@@ -1,8 +1,8 @@
 import * as d3 from 'd3';
-import type { Head, Meta } from '../types/lsp_messages';
 import type { Editor } from '../editor/init';
-import type { Binding } from '../types/rdf';
 import type { QlueLsServiceConfig } from '../types/backend';
+import type { Head, Meta } from '../types/lsp_messages';
+import type { Binding } from '../types/rdf';
 
 export function clearQueryStats() {
   document.getElementById('resultSize')!.innerText = '?';
@@ -20,7 +20,7 @@ export function showQueryMetaData(meta: Meta) {
   if (meta['query-time-ms']) {
     document.getElementById('queryTimeComputeContainer')!.classList.remove('hidden');
     document.getElementById('queryTimeCompute')!.innerText =
-      meta['query-time-ms'].toLocaleString('en-US') + 'ms';
+      `${meta['query-time-ms'].toLocaleString('en-US')}ms`;
   }
 }
 
@@ -107,7 +107,7 @@ export function startQueryTimer(): d3.Timer {
   timerEl.classList.remove('normal-nums');
   timerEl.classList.add('tabular-nums');
   const timer = d3.timer((elapsed) => {
-    timerEl.innerText = elapsed.toLocaleString('en-US') + 'ms';
+    timerEl.innerText = `${elapsed.toLocaleString('en-US')}ms`;
   });
   return timer;
 }
@@ -138,14 +138,14 @@ export async function showMapViewButton(editor: Editor, head: Head, bindings: Bi
   if (n_rows > 0 && last_col_var in bindings[0]) {
     const binding = bindings[0][last_col_var];
     if (
-      binding.type == 'literal' &&
+      binding.type === 'literal' &&
       binding.datatype === 'http://www.opengis.net/ont/geosparql#wktLiteral'
     ) {
       const backend = (await editor.languageClient.sendRequest(
         'qlueLs/getBackend',
         {}
       )) as QlueLsServiceConfig;
-      let mapViewBaseUrl = backend.additionalData.mapViewUrl ?? 'https://qlever.dev/petrimaps/';
+      const mapViewBaseUrl = backend.additionalData.mapViewUrl ?? 'https://qlever.dev/petrimaps/';
       mapViewButton?.classList.remove('hidden');
       const query: string = editor.getContent();
       const params = {
