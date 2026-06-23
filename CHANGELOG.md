@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [0.5.0] - 2026-06-32
+
+### Added
+
+- **Experimental:** Alternative result renderers — visualize SPARQL results as charts (e.g. line plots) in addition to the table view, configured per query via the `sparql-results` web component
+
 ## [0.4.1] - 2026-06-12
 
 ### Fixed
