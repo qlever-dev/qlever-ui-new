@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+
+- The last selected backend is remembered and reused when opening the UI without a backend in the URL path; the loaded backend is reflected in the URL path
+
 ## [0.5.0] - 2026-06-32
 
 ### Added

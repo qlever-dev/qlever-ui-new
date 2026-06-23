@@ -14,6 +14,8 @@ import type {
 } from '../types/backend';
 import { BASE_PATH, getPathParameters } from '../utils';
 
+const BACKEND_STORAGE_KEY = 'QLeverUI backend';
+
 const endpointConfigPromise: Promise<EndpointListResponse> = apiFetch('endpoints/')
   .then((response) => {
     if (!response.ok) {
@@ -52,9 +54,18 @@ export async function configureBackends(editor: Editor) {
   let defaultEndpointSlug: string | null = null;
   const endpointConfigs = await endpointConfigPromise;
 
+  // NOTE: when no backend is specified in the path, fall back to the last
+  // selected backend (persisted in localStorage), so a new tab opens the
+  // backend the user was last using.
+  const storedSlug = localStorage.getItem(BACKEND_STORAGE_KEY);
+  const preferredSlug =
+    path_slug === undefined && storedSlug !== null && storedSlug in endpointConfigs
+      ? storedSlug
+      : path_slug;
+
   // NOTE: find default service then fetch & load its configuration (blocking)
   for (const [slug, config] of Object.entries(endpointConfigs)) {
-    const is_active = path_slug === slug || (path_slug === undefined && config.default);
+    const is_active = preferredSlug === slug || (preferredSlug === undefined && config.default);
     backendSelector.add(new Option(config.name, slug, false, is_active));
     activeEndpointSlug = is_active ? slug : activeEndpointSlug;
     if (config.default) {
@@ -103,6 +114,14 @@ export async function configureBackends(editor: Editor) {
       }
     }
   }
+  // NOTE: reflect the loaded backend in the URL path when none was specified.
+  if (path_slug === undefined && activeEndpointSlug) {
+    history.replaceState(null, '', `${BASE_PATH}${activeEndpointSlug}`);
+  }
+  // NOTE: remember the loaded backend so a new tab without a path reuses it.
+  if (activeEndpointSlug) {
+    localStorage.setItem(BACKEND_STORAGE_KEY, activeEndpointSlug);
+  }
   document.dispatchEvent(new CustomEvent('backend-selected', { detail: activeEndpointSlug }));
 
   backendSelector.addEventListener('change', () => {
@@ -111,6 +130,7 @@ export async function configureBackends(editor: Editor) {
         backendName: backendSelector.value,
       })
       .then(() => {
+        localStorage.setItem(BACKEND_STORAGE_KEY, backendSelector.value);
         history.pushState({}, '', `${BASE_PATH}${backendSelector.value}`);
         document.dispatchEvent(
           new CustomEvent('backend-selected', { detail: backendSelector.value })
