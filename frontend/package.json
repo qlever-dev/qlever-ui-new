@@ -2,7 +2,7 @@
   "name": "qlever_ui",
   "version": "0.4.1",
   "module": "qlever_ui/main.ts",
-  "author": "Ioannis Nezis<ioannis@nezis.de",
+  "author": "Ioannis Nezis <ioannis@nezis.de>",
   "type": "module",
   "scripts": {
     "build": "NODE_OPTIONS='--max-old-space-size=8192' vite build",
@@ -26,6 +26,7 @@
     "monaco-editor": "npm:@codingame/monaco-vscode-editor-api@25.1.2",
     "monaco-languageclient": "10.7.0",
     "qlue-ls": "^3.0.0",
+    "sparql-results": "^0.1.0",
     "tailwindcss": "4.2.2",
     "vscode": "npm:@codingame/monaco-vscode-extension-api@25.1.2"
   }

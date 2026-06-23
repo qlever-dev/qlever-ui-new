@@ -12,16 +12,19 @@ export function clearQueryStats() {
 }
 
 export function showQueryMetaData(meta: Meta) {
-  const sizeEl = document.getElementById('resultSize')!;
-  sizeEl.classList.add('normal-nums');
-  sizeEl.classList.remove('tabular-nums');
-  sizeEl.innerText = meta['result-size-total'].toLocaleString('en-US');
-
+  showResultsSize(meta['result-size-total']);
   if (meta['query-time-ms']) {
     document.getElementById('queryTimeComputeContainer')!.classList.remove('hidden');
     document.getElementById('queryTimeCompute')!.innerText =
       `${meta['query-time-ms'].toLocaleString('en-US')}ms`;
   }
+}
+
+export function showResultsSize(size: number) {
+  const sizeEl = document.getElementById('resultSize')!;
+  sizeEl.classList.add('normal-nums');
+  sizeEl.classList.remove('tabular-nums');
+  sizeEl.innerText = size.toLocaleString('en-US');
 }
 
 export function hideLoadingAnimation() {

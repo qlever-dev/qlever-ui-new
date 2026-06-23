@@ -178,3 +178,8 @@ function getShortDatatype(datatype: string): string {
 function isNumericString(str: string): boolean {
   return !Number.isNaN(Number(str)) && !Number.isNaN(parseFloat(str));
 }
+
+export function clearTable() {
+  const resultTable = document.getElementById('resultsTable') as HTMLTableElement;
+  resultTable.innerText = '';
+}

@@ -57,6 +57,10 @@ export type ExecuteOperationResult =
   | { queryResult: ExecuteQueryResult }
   | { updateResult: ExecuteUpdateResult };
 
+export function getOperationTimeMs(result: ExecuteOperationResult): number {
+  return 'queryResult' in result ? result.queryResult.timeMs : result.updateResult.time.total;
+}
+
 export interface ExecuteQueryResult {
   timeMs: number;
   result: SPARQLResults;
